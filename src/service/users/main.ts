@@ -1,4 +1,4 @@
-import { getallUsers, getOneUser } from "../../repository/users/main";
+import { getallUsers, getOneUser } from "../../prisma/queries/users/main";
 
 export async function allUsers() {
   return await getallUsers();

@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { updateSubmissionState } from "../../repository/contests/main";
+import { updateSubmissionState } from "../../prisma/queries/contests/main";
 
 export const runsRouter = express.Router();
 runsRouter.put("/:id", updateRun);

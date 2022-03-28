@@ -1,6 +1,4 @@
-import { Contest, PrismaClient, Tasks, Submissions } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../client";
 
 export type Submission = {
   code: string;
@@ -10,11 +8,11 @@ export type Submission = {
   state?: "CE" | "MLE" | "TLE" | "RE" | "OLE" | "IE" | "WA" | "AC" | "WJ";
 };
 
-export async function getAllContests(): Promise<Array<Contest>> {
+export async function getAllContests() {
   return await prisma.contest.findMany({});
 }
 
-export async function getOneContest(id: string): Promise<Contest | Error> {
+export async function getOneContest(id: string) {
   const contest = await prisma.contest.findUnique({
     where: {
       id: id,
@@ -27,7 +25,7 @@ export async function getOneContest(id: string): Promise<Contest | Error> {
   }
 }
 
-export async function getContestTasks(id: string): Promise<Array<Tasks>> {
+export async function getContestTasks(id: string) {
   return await prisma.tasks.findMany({
     where: {
       contestId: id,
@@ -35,7 +33,7 @@ export async function getContestTasks(id: string): Promise<Array<Tasks>> {
   });
 }
 
-export async function getOneContestTask(id: string): Promise<Tasks | Error> {
+export async function getOneContestTask(id: string) {
   const task = await prisma.tasks.findUnique({
     where: {
       id: id,
@@ -48,7 +46,7 @@ export async function getOneContestTask(id: string): Promise<Tasks | Error> {
   }
 }
 
-export async function newSubmission(body: Submission): Promise<Submissions> {
+export async function newSubmission(body: Submission) {
   // ToDo: ユーザーIDの固定をやめる
   return await prisma.submissions.create({
     data: {
@@ -61,11 +59,11 @@ export async function newSubmission(body: Submission): Promise<Submissions> {
   });
 }
 
-export async function submissions(): Promise<Array<Submissions>> {
+export async function submissions() {
   return await prisma.submissions.findMany({});
 }
 
-export async function oneSubmission(id: string): Promise<Submissions | Error> {
+export async function oneSubmission(id: string) {
   const submission = await prisma.submissions.findUnique({
     where: {
       id: id,

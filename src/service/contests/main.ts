@@ -8,7 +8,7 @@ import {
   Submission,
   submissions,
   SubmitQueue,
-} from "../../repository/contests/main";
+} from "../../prisma/queries/contests/main";
 import { enqueue, hqURL, Job, HqResponse } from "./jobqueuemanager";
 
 export async function allContests() {

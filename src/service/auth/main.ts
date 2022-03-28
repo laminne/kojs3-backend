@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 // import * as fs from "fs";
 import jsonwebtoken from "jsonwebtoken";
-import { createNewAccount } from "../../repository/auth/main";
-import { getUser } from "../../repository/users/main";
+import { createNewAccount } from "../../prisma/queries/auth/main";
+import { getUser } from "../../prisma/queries/users/main";
 
 export async function registerUser(name: string, password: string) {
   const hashed_password = await bcrypt.hash(password, 10);
