@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const hqURL = "localhost:19900";
+export const hqURL = "http://localhost:19900/job";
 export type Job = {
   url: string;
   payload: {
@@ -34,14 +34,16 @@ export type HqResponse = {
 
 export async function enqueue(job: Job): Promise<HqResponse | Error> {
   try {
-    const res = await axios.post<HqResponse>(hqURL, job);
+    const res = await axios.post<HqResponse>(hqURL, JSON.stringify(job), {
+      headers: { "Content-Type": "application/json" },
+    });
     if (!res.data.status) {
       console.error("API RESPONSE ERROR");
     }
     return res.data;
-  } catch {
-    console.error("API ERROR");
-    return new Error("123");
+  } catch (e) {
+    console.log(e);
+    throw e;
   }
 }
 

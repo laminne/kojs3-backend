@@ -36,10 +36,10 @@ export function router() {
   app.use("/users", usersRouter);
   app.use("/contests", contestsRouter);
   app.use("/runs", runsRouter);
-  app.use("/", root);
+  // app.use("/", root);
   app.listen(3080);
 }
 
-function root(_: any, res: express.Response) {
-  res.send("KEMOMIMI JUDGE v0.0.1");
-}
+// function root(_: any, res: express.Response) {
+//   res.send("KEMOMIMI JUDGE v0.0.1");
+// }

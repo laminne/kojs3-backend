@@ -11,13 +11,14 @@ export type Submission = {
 };
 
 export async function createSubmission(body: Submission) {
+  console.log(body);
   // ToDo: ユーザーIDの固定をやめる
   try {
     return await prisma.submissions.create({
       data: {
         code: body.code,
         tasks: { connect: { id: body.taskId } },
-        User: { connect: { id: "12312312" } },
+        User: { connect: { id: body.userId } },
         state: "WJ", // 実行開始時は必ず WJ (Waiting for Judge)
         response: "",
       },

@@ -1,5 +1,5 @@
 import * as db from "../../prisma/queries/main";
-import { enqueue, hqURL, Job, HqResponse } from "./jobqueuemanager";
+import { enqueue, Job, HqResponse } from "./jobqueuemanager";
 
 export type Submission = {
   code: string;
@@ -35,16 +35,18 @@ export async function submissionTask(body: {
     code: body.code,
     taskId: body.taskId,
     compilerType: body.compilertype,
-    userId: body.taskId,
+    userId: body.userId,
   };
   const jobqueue: Job = {
-    url: hqURL,
+    url: "http://127.0.0.1:3000/run",
     payload: {
-      task_id: submission.taskId,
+      // task_id: submission.taskId,
+      task_id: "000-000",
       compiler_type: submission.compilerType,
       code: submission.code,
     },
   };
+  console.log(submission.compilerType, "コンパイラタイプ");
   const subres = await db.createSubmission(submission);
   const res = await enqueue(jobqueue);
   if (isHqResponse(res)) {
@@ -54,6 +56,7 @@ export async function submissionTask(body: {
       hqId: res.id,
     });
   }
+  return subres;
 }
 
 export async function allSubmissions() {
