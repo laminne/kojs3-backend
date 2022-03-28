@@ -1,23 +1,24 @@
 import { prisma } from "../../client";
 
-export type Users = {
+export type User = {
   id: string;
   name: string;
 };
-/* eslint-disable */
-export async function getallUsers(): Promise<Array<Users>> {
+
+export async function findAllUsers(): Promise<User[]> {
   const user = await prisma.user.findMany({});
-  let users: Array<Users> = [];
+  const users: User[] = [];
   for (const i in user) {
-    users[i] = {
+    const tmp = {
       id: user[i].id,
       name: user[i].name,
     };
+    users.push(tmp);
   }
   return users;
 }
 
-export async function getOneUser(id: string): Promise<Users | undefined> {
+export async function findUserById(id: string): Promise<User | undefined> {
   const user = await prisma.user.findUnique({
     where: {
       id: id,
@@ -33,7 +34,7 @@ export async function getOneUser(id: string): Promise<Users | undefined> {
   }
 }
 
-export async function getUser(id: string){
+export async function getUser(id: string) {
   const user = await prisma.user.findUnique({
     where: {
       id: id,
@@ -45,8 +46,3 @@ export async function getUser(id: string){
     return user;
   }
 }
-
-// ToDo: 過去の成績表示
-// export async function getUserHistory(id: string): Promise<Array<Users>>{
-//   const user = await prisma.
-// }
