@@ -1,10 +1,19 @@
 import { prisma } from "../../client";
+import { PrismaClientInitializationError } from "@prisma/client/runtime";
+import { DBConnectionError } from "../../error";
 
 export async function createNewAccount(name: string, hashed: string) {
-  return await prisma.user.create({
-    data: {
-      name: name,
-      password: hashed,
-    },
-  });
+  try {
+    return await prisma.user.create({
+      data: {
+        name: name,
+        password: hashed,
+      },
+    });
+  } catch (e) {
+    if (e instanceof PrismaClientInitializationError) {
+      throw new DBConnectionError();
+    }
+    throw e;
+  }
 }
