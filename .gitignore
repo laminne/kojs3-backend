@@ -1,0 +1,7 @@
+node_modules
+.env
+.log
+build
+.idea
+.db
+/prisma/dev.db
