@@ -8,7 +8,7 @@ import {
   getSubmission,
   submissionTask,
 } from "../../service/contests/main";
-import { updateSubmissionState } from "../../prisma/queries/contests/main";
+import * as db from "../../prisma/queries/main";
 
 // すべてのコンテストを取得
 export async function getAllContests(_req: Request, res: Response) {
@@ -65,7 +65,7 @@ export async function getOneSubmission(req: Request, res: Response) {
 }
 
 export async function updateState(req: Request, res: Response) {
-  const submission = await updateSubmissionState(
+  const submission = await db.updateSubmissionState(
     req.params.contestId,
     req.body.res,
     req.body.state

@@ -33,7 +33,7 @@ export async function getOneUser(id: string): Promise<Users | undefined> {
   }
 }
 
-export async function getUser(id: string): Promise<Users | undefined> {
+export async function getUser(id: string){
   const user = await prisma.user.findUnique({
     where: {
       id: id,

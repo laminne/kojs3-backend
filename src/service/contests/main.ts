@@ -1,30 +1,28 @@
-import {
-  getAllContests,
-  getContestTasks,
-  getOneContest,
-  getOneContestTask,
-  newSubmission,
-  oneSubmission,
-  Submission,
-  submissions,
-  SubmitQueue,
-} from "../../prisma/queries/contests/main";
+import * as db from "../../prisma/queries/main";
 import { enqueue, hqURL, Job, HqResponse } from "./jobqueuemanager";
 
+export type Submission = {
+  code: string;
+  taskId: string;
+  userId: string;
+  compilerType: string;
+  state?: "CE" | "MLE" | "TLE" | "RE" | "OLE" | "IE" | "WA" | "AC" | "WJ";
+};
+
 export async function allContests() {
-  return await getAllContests();
+  return await db.findAllContests();
 }
 
 export async function oneContest(contestId: string) {
-  return await getOneContest(contestId);
+  return await db.findContestById(contestId);
 }
 
 export async function contestTasks(contestId: string) {
-  return await getContestTasks(contestId);
+  return await db.SearchContestTasksById(contestId);
 }
 
 export async function oneContestTask(taskId: string) {
-  return await getOneContestTask(taskId);
+  return await db.findContestTaskById(taskId);
 }
 
 export async function submissionTask(body: {
@@ -47,10 +45,10 @@ export async function submissionTask(body: {
       code: submission.code,
     },
   };
-  const subres = await newSubmission(submission);
+  const subres = await db.createSubmission(submission);
   const res = await enqueue(jobqueue);
   if (isHqResponse(res)) {
-    await SubmitQueue({
+    await db.SubmitQueue({
       status: res.status,
       submission: subres.id,
       hqId: res.id,
@@ -59,11 +57,11 @@ export async function submissionTask(body: {
 }
 
 export async function allSubmissions() {
-  return await submissions();
+  return await db.findAllSubmissions();
 }
 
 export async function getSubmission(id: string) {
-  return await oneSubmission(id);
+  return await db.findSubmissionById(id);
 }
 
 // export async function updateState(id: string, response: string) {
