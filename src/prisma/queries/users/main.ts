@@ -1,6 +1,4 @@
-import { PrismaClient, User } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../client";
 
 export type Users = {
   id: string;
@@ -28,15 +26,14 @@ export async function getOneUser(id: string): Promise<Users | undefined> {
   if (!user) {
     return undefined;
   } else {
-    const users: Users = {
+    return {
       id: user.id,
       name: user.name,
     };
-    return users;
   }
 }
 
-export async function getUser(id: string): Promise<User | undefined> {
+export async function getUser(id: string){
   const user = await prisma.user.findUnique({
     where: {
       id: id,

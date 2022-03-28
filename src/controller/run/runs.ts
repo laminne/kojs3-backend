@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { updateSubmissionState } from "../../repository/contests/main";
+import * as db from "../../prisma/queries/main";
 
 export const runsRouter = express.Router();
 runsRouter.put("/:id", updateRun);
@@ -13,7 +13,7 @@ async function updateRun(req: Request, res: Response) {
     }
   }
 
-  const submission = await updateSubmissionState(
+  const submission = await db.updateSubmissionState(
     req.params.id,
     req.body.Status,
     state
