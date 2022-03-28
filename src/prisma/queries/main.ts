@@ -6,6 +6,6 @@ export * from "./contests/search";
 export * from "./submissions/create";
 export * from "./submissions/update";
 
-export * from "./users/main";
+export * from "./users/find";
 
 export * from "./queue/create";

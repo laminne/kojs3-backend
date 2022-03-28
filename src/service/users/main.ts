@@ -1,13 +1,9 @@
-import { getallUsers, getOneUser } from "../../prisma/queries/users/main";
+import * as db from "../../prisma/queries/users/find";
 
 export async function allUsers() {
-  return await getallUsers();
+  return await db.findAllUsers();
 }
 
 export async function getUser(userId: string) {
-  return await getOneUser(userId);
+  return await db.findUserById(userId);
 }
-
-// export async function userHistory(userId: string) {
-//   return await
-// }
