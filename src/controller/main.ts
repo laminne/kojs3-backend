@@ -8,6 +8,7 @@ import express from "express";
 import { usersRouter } from "./users/main";
 import { contestsRouter } from "./contests/main";
 import { runsRouter } from "./run/runs";
+import { authRouter } from "./auth/main";
 const app = express();
 // Routeing
 
@@ -36,7 +37,7 @@ export function router() {
   app.use("/users", usersRouter);
   app.use("/contests", contestsRouter);
   app.use("/runs", runsRouter);
-  // app.use("/", root);
+  app.use("/", authRouter);
   app.listen(3080);
 }
 

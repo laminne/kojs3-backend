@@ -12,6 +12,7 @@ export async function createNewAccount(name: string, hashed: string) {
     });
   } catch (e) {
     if (e instanceof PrismaClientInitializationError) {
+      console.log(e);
       throw new DBConnectionError();
     }
     throw e;
