@@ -42,7 +42,9 @@ export async function enqueue(job: Job): Promise<HqResponse | Error> {
     }
     return res.data;
   } catch (e) {
-    console.log(e);
+    if (axios.isAxiosError(e)) {
+      throw e;
+    }
     throw e;
   }
 }

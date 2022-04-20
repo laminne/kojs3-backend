@@ -11,9 +11,8 @@ import {
 } from "./contests";
 
 export const contestsRouter = express.Router();
-
 contestsRouter.route("/").get(getAllContests);
-
+console.log("あいうえお");
 contestsRouter.route("/:contestId").get(getOneContest);
 
 contestsRouter.route("/:contestId/tasks").get(getContestTasks);
