@@ -27,3 +27,12 @@ export async function genJWTToken(name: string, password: string) {
   };
   return jsonwebtoken.sign(data, "123", { algorithm: "HS256" });
 }
+
+export function isTokenValid(token: string): boolean {
+  const r = jsonwebtoken.verify(token, "123");
+  if (!r) {
+    return false;
+  } else {
+    return true;
+  }
+}
