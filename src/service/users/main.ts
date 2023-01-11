@@ -1,9 +1,15 @@
-import * as db from "../../prisma/users";
+export class UsersUseCase {
+  private _repository: any;
 
-export async function allUsers() {
-  return await db.findAllUsers();
-}
+  constructor(repo: any) {
+    this._repository = repo;
+  }
 
-export async function getUser(userId: string) {
-  return await db.findUserById(userId);
+  async allUsers() {
+    return await this._repository.findAllUsers();
+  }
+
+  async getUser(userId: string) {
+    return await this._repository.findUserById(userId);
+  }
 }

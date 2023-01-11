@@ -1,8 +1,6 @@
 import express from "express";
-import { getAllUsers, getUserData } from "./users";
-
+import { usersController } from "../main";
 export const usersRouter = express.Router();
 
-usersRouter.route("/").get(getAllUsers);
-
-usersRouter.route("/users/:userId").get(getUserData);
+usersRouter.route("/").get(usersController.getAllUsers);
+usersRouter.route("/users/:userId").get(usersController.getUserData);

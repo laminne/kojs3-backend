@@ -1,19 +1,21 @@
 import { Request, Response } from "express";
-import { allUsers, getUser } from "../../service/users/main";
+import { UsersUseCase } from "../../service/users/main";
 
-export async function getAllUsers(_req: Request, res: Response) {
-  const users = await allUsers();
-  res.json(users);
-  return;
-}
+export class UsersController {
+  private _usersUsecase: UsersUseCase;
+  constructor(repo: any) {
+    this._usersUsecase = new UsersUseCase(repo);
+  }
 
-export async function getUserData(req: Request, res: Response) {
-  const user = await getUser(req.params.userId);
-  res.json(user);
-  return;
-}
+  async getAllUsers(_req: Request, res: Response) {
+    const users = await this._usersUsecase.allUsers();
+    res.json(users);
+    return;
+  }
 
-export function getUserHistory(req: Request, res: Response) {
-  console.log(req.path);
-  res.send("Hello");
+  async getUserData(req: Request, res: Response) {
+    const user = await this._usersUsecase.getUser(req.params.userId);
+    res.json(user);
+    return;
+  }
 }

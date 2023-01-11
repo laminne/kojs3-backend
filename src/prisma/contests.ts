@@ -2,70 +2,72 @@ import { prisma } from "./client";
 import { PrismaClientInitializationError } from "@prisma/client/runtime";
 import { DBConnectionError } from "./error";
 
-export async function findAllSubmissions() {
-  return await prisma.submissions.findMany({});
-}
-
-export async function findAllContests() {
-  return await prisma.contest.findMany({});
-}
-
-export async function findContestById(id: string) {
-  try {
-    return await prisma.contest.findUnique({
-      where: {
-        id: id,
-      },
-    });
-  } catch (e) {
-    if (e instanceof PrismaClientInitializationError) {
-      throw new DBConnectionError();
-    }
-    throw e;
+export class PrismaContestsRepository {
+  async findAllSubmissions() {
+    return await prisma.submissions.findMany({});
   }
-}
 
-export async function findContestTaskById(id: string) {
-  try {
-    return await prisma.tasks.findUnique({
-      where: {
-        id: id,
-      },
-    });
-  } catch (e) {
-    if (e instanceof PrismaClientInitializationError) {
-      throw new DBConnectionError();
-    }
-    throw e;
+  async findAllContests() {
+    return await prisma.contest.findMany({});
   }
-}
 
-export async function findSubmissionById(id: string) {
-  try {
-    return await prisma.submissions.findUnique({
-      where: {
-        id: id,
-      },
-    });
-  } catch (e) {
-    if (e instanceof PrismaClientInitializationError) {
-      throw new DBConnectionError();
+  async findContestById(id: string) {
+    try {
+      return await prisma.contest.findUnique({
+        where: {
+          id: id,
+        },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientInitializationError) {
+        throw new DBConnectionError();
+      }
+      throw e;
     }
-    throw e;
   }
-}
 
-export async function SearchContestTasksById(id: string) {
-  try {
-    return await prisma.tasks.findMany({
-      where: {
-        contestId: id,
-      },
-    });
-  } catch (e) {
-    if (e instanceof PrismaClientInitializationError) {
-      throw new DBConnectionError();
+  async findContestTaskById(id: string) {
+    try {
+      return await prisma.tasks.findUnique({
+        where: {
+          id: id,
+        },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientInitializationError) {
+        throw new DBConnectionError();
+      }
+      throw e;
     }
-    throw e;
+  }
+
+  async findSubmissionById(id: string) {
+    try {
+      return await prisma.submissions.findUnique({
+        where: {
+          id: id,
+        },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientInitializationError) {
+        throw new DBConnectionError();
+      }
+      throw e;
+    }
+  }
+
+  async SearchContestTasksById(id: string) {
+    try {
+      return await prisma.tasks.findMany({
+        where: {
+          contestId: id,
+        },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientInitializationError) {
+        throw new DBConnectionError();
+      }
+      throw e;
+    }
   }
 }

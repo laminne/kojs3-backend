@@ -11,8 +11,14 @@ import { runsRouter } from "./run/runs";
 import { authRouter } from "./auth/main";
 import "./ws/main";
 import { isTokenValid } from "../service/auth/main";
+import { PrismaClient } from "@prisma/client";
+import { ContestController } from "./contests/contests";
+import { UsersController } from "./users/users";
+
 const app = express();
-// Routeing
+const prisma = new PrismaClient();
+export const contestController = new ContestController(prisma);
+export const usersController = new UsersController(prisma);
 
 export function router() {
   const allowCrossDomain = (
@@ -59,6 +65,7 @@ export function router() {
       res.sendStatus(401);
     }
   };
+
   app.use(allowCrossDomain);
   app.use(express.json());
   app.use("/users", checkToken, usersRouter);
