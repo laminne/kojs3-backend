@@ -10,7 +10,8 @@
     "build": "npx tsc -p . --noImplicitAny",
     "lint": "eslint --ignore-path .gitignore 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint --ignore-path .gitignore 'src/**/*.{js,jsx,ts,tsx}' --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "test": "vitest run"
   },
   "dependencies": {
     "@prisma/client": "4.7.1",
@@ -22,6 +23,7 @@
     "@types/node": "^16.11.6",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
+    "argon2": "^0.30.3",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "eslint": "^8.1.0",
@@ -38,6 +40,7 @@
     "ws": "^8.5.0"
   },
   "devDependencies": {
-    "@types/ws": "^8.5.3"
+    "@types/ws": "^8.5.3",
+    "vitest": "^0.27.0"
   }
 }

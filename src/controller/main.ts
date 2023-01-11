@@ -7,13 +7,12 @@
 import express from "express";
 import { usersRouter } from "./users/main";
 import { contestsRouter } from "./contests/main";
-import { runsRouter } from "./run/runs";
-import { authRouter } from "./auth/main";
+import { authRouter } from "./users/main";
 import "./ws/main";
-import { isTokenValid } from "../service/auth/main";
 import { PrismaClient } from "@prisma/client";
 import { ContestController } from "./contests/contests";
 import { UsersController } from "./users/users";
+import { isTokenValid } from "../service/users/main";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -70,7 +69,6 @@ export function router() {
   app.use(express.json());
   app.use("/users", checkToken, usersRouter);
   app.use("/contests", checkToken, contestsRouter);
-  app.use("/runs", runsRouter);
   app.use("/", authRouter);
   app.listen(3080);
 }
