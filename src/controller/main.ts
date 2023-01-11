@@ -67,7 +67,3 @@ export function router() {
   app.use("/", authRouter);
   app.listen(3080);
 }
-
-// function root(_: any, res: express.Response) {
-//   res.send("KEMOMIMI JUDGE v0.0.1");
-// }

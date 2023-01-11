@@ -17,8 +17,6 @@ contestsRouter.route("/:contestId").get(getOneContest);
 
 contestsRouter.route("/:contestId/tasks").get(getContestTasks);
 
-// contestsRouter.route("/:contestId/ranking").get(getContestRanking);
-
 contestsRouter.route("/:contestId/tasks/:taskId").get(getOneTask);
 
 contestsRouter.route("/:contestId/submit").post(submission);
