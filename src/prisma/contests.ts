@@ -1,6 +1,6 @@
-import { prisma } from "../../client";
+import { prisma } from "./client";
 import { PrismaClientInitializationError } from "@prisma/client/runtime";
-import { DBConnectionError } from "../../error";
+import { DBConnectionError } from "./error";
 
 export async function findAllSubmissions() {
   return await prisma.submissions.findMany({});
@@ -45,6 +45,21 @@ export async function findSubmissionById(id: string) {
     return await prisma.submissions.findUnique({
       where: {
         id: id,
+      },
+    });
+  } catch (e) {
+    if (e instanceof PrismaClientInitializationError) {
+      throw new DBConnectionError();
+    }
+    throw e;
+  }
+}
+
+export async function SearchContestTasksById(id: string) {
+  try {
+    return await prisma.tasks.findMany({
+      where: {
+        contestId: id,
       },
     });
   } catch (e) {

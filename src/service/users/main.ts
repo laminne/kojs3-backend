@@ -1,4 +1,4 @@
-import * as db from "../../prisma/queries/users/find";
+import * as db from "../../prisma/users";
 
 export async function allUsers() {
   return await db.findAllUsers();

@@ -1,6 +1,6 @@
-import { prisma } from "../../client";
+import { prisma } from "./client";
 import { PrismaClientInitializationError } from "@prisma/client/runtime";
-import { DBConnectionError } from "../../error";
+import { DBConnectionError } from "./error";
 
 export async function SubmitQueue(queue: {
   status: string;
