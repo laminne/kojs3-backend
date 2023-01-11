@@ -1,6 +1,7 @@
 /*
-   KEMOMIMI ONLINE JUDGE SYSTEM
-   |C| 2021 - 2022 Tatsuto Yamamoto
+   J "K" ONLINE JUDGE SYSTEM
+   |C| 2021 - 2023 Tatsuto Yamamoto
+   |C| 2022 - 2023 MCT-JOKEN
    This Software is licensed under MIT License.
  */
 
@@ -70,5 +71,16 @@ export function router() {
   app.use("/users", checkToken, usersRouter);
   app.use("/contests", checkToken, contestsRouter);
   app.use("/", authRouter);
-  app.listen(3080);
+  app.listen(3080, () => {
+    console.log(" ____  _    _      _____  ____  _____ ");
+    console.log("|____|| | / /     |  _  ||____||  ___|");
+    console.log("   | || |/ /  ___ | | | |   | || |___ ");
+    console.log("   | || | <  |___|| | | |   | ||___  |");
+    console.log(" __| || |\\ \\      | |_| | __| | ___| |");
+    console.log("|____||_| \\_\\     |_____||____||_____|");
+    console.log("");
+    console.log("  J      K     -     O     J      S");
+    console.log("2 0 2 2 - 2 3  M C T - J O K E N");
+    console.log("server started :3080");
+  });
 }
