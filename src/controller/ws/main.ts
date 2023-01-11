@@ -12,11 +12,6 @@ ws.on("connection", (w) => {
       return conn !== i;
     });
   });
-
-  // w.on("message", async (mes) => {
-  //   // console.log(mes.toString());
-  //   // await WebSocketCommandRouter(mes.toString());
-  // });
 });
 
 export async function sendMessageToWebSocketStream(mes: string) {
@@ -24,11 +19,3 @@ export async function sendMessageToWebSocketStream(mes: string) {
     client.send(JSON.stringify(mes));
   });
 }
-
-// async function WebSocketCommandRouter(c: string) {
-//   /*
-//   S -> C
-//     ジャッジ結果通知
-//    */
-//   console.log(c);
-// }

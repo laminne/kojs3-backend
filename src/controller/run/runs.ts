@@ -38,31 +38,3 @@ async function updateRun(req: Request, res: Response) {
 }
 
 type JudgeState = "CE" | "MLE" | "TLE" | "RE" | "OLE" | "IE" | "WA" | "AC";
-
-/*
-
-{
-  "TaskID":"000-000",
-  "Status":[
-    {
-      "TestID":"",
-      "ExitStatus":0,
-      "Duration":3118,
-      "Status":"WA"
-    },
-    {
-      "TestID":"",
-      "ExitStatus":0,
-      "Duration":3071,
-      "Status":"WA"
-    },
-    {
-      "TestID":"",
-      "ExitStatus":0,
-      "Duration":3069,
-      "Status":"WA"
-     }
-   ]
-}
-
-*/
