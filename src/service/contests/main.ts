@@ -1,5 +1,5 @@
-import { enqueue, Job, HqResponse } from "./jobqueuemanager";
-import { renderMarkdownToHTML } from "../misc/mdrender";
+import { enqueue, Job, HqResponse } from "./jobqueuemanager.js";
+import { renderMarkdownToHTML } from "../misc/mdrender.js";
 
 export type Submission = {
   code: string;

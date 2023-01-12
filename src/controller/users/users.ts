@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { UsersUseCase } from "../../service/users/main";
+import { UsersUseCase } from "../../service/users/main.js";
+import { PrismaUsersRepository } from "../../prisma/users.js";
 
 export class UsersController {
   private _usersUsecase: UsersUseCase;
-  private _repo: any;
-  constructor(repo: any) {
+
+  constructor(repo: PrismaUsersRepository) {
     this._usersUsecase = new UsersUseCase(repo);
-    this._repo = repo;
   }
 
   async getAllUsers(_req: Request, res: Response) {
@@ -34,8 +34,7 @@ export class UsersController {
   }
 
   async register(req: Request, res: Response) {
-    // ToDo: 直接DB依存辞める
-    const user = await this._repo.registerUser(
+    const user = await this._usersUsecase.createUser(
       req.body.name,
       req.body.password
     );

@@ -1,10 +1,14 @@
 import express from "express";
-import { contestController } from "../main";
+import { ContestController } from "../controller/contests/contests.js";
+import { prisma } from "../prisma/client.js";
+
+export const contestController: ContestController = new ContestController(
+  prisma
+);
 
 export const contestsRouter = express.Router();
 
 contestsRouter.route("/").get(contestController.getAllContests);
-console.log("あいうえお");
 contestsRouter.route("/:contestId").get(contestController.getOneContest);
 
 contestsRouter

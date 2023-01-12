@@ -1,6 +1,6 @@
-import { prisma } from "./client";
+import { prisma } from "./client.js";
 import { PrismaClientInitializationError } from "@prisma/client/runtime";
-import { DBConnectionError } from "./error";
+import { DBConnectionError } from "./error.js";
 
 export type Submission = {
   code: string;

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ContestUseCase } from "../../service/contests/main";
+import { ContestUseCase } from "../../service/contests/main.js";
 
 export class ContestController {
   private _contestUsecase: ContestUseCase;

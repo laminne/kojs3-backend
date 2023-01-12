@@ -4,6 +4,6 @@
    This Software is licensed under MIT License.
  */
 
-import { router } from "./controller/main";
+import { startServer } from "./controller/main.js";
 
-router();
+startServer();

@@ -1,6 +1,6 @@
-import { prisma } from "./client";
-import { PrismaClientInitializationError } from "@prisma/client/runtime";
-import { DBConnectionError } from "./error";
+import { prisma } from "./client.js";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/index.js";
+import { DBConnectionError } from "./error.js";
 
 export type User = {
   id: string;
@@ -8,6 +8,9 @@ export type User = {
 };
 
 export class PrismaUsersRepository {
+  constructor() {
+    console.log("Initialized");
+  }
   public async findAllUsers(): Promise<User[]> {
     const user = await prisma.user.findMany({});
     const users: User[] = [];
@@ -61,6 +64,23 @@ export class PrismaUsersRepository {
       return res[0];
     } catch (e) {
       if (e instanceof PrismaClientInitializationError) {
+        throw new DBConnectionError();
+      }
+      throw e;
+    }
+  }
+
+  async createNewAccount(name: string, hashed: string) {
+    try {
+      return await prisma.user.create({
+        data: {
+          name: name,
+          password: hashed,
+        },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientInitializationError) {
+        console.log(e);
         throw new DBConnectionError();
       }
       throw e;

@@ -5,8 +5,9 @@
   "main": "main.js",
   "author": "Tatsuto Yamamoto",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "start": "npx tsc -p . --noImplicitAny && echo *build done* &&node ./build/main.js",
+    "start": "npx tsc -p . --noImplicitAny && echo *build done* &&node --enable-source-maps ./build/main.js",
     "build": "npx tsc -p . --noImplicitAny",
     "lint": "eslint --ignore-path .gitignore 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint --ignore-path .gitignore 'src/**/*.{js,jsx,ts,tsx}' --fix",

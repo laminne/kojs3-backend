@@ -1,5 +1,5 @@
-import { IPasswordEncoder } from "./passwordEncoder";
-import { Argon2PasswordEncoder } from "./argon2";
+import { IPasswordEncoder } from "./passwordEncoder.js";
+import { Argon2PasswordEncoder } from "./argon2.js";
 import { describe, it, expect } from "vitest";
 
 describe("Argon2で正しく検証できる", async () => {

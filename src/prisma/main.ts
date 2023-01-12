@@ -1,10 +1,9 @@
-import "./client";
-export * from "./auth";
+import "./client.js";
 
-export * from "./contests";
+export * from "./contests.js";
 
-export * from "./submissions";
+export * from "./submissions.js";
 
-export * from "./users";
+export * from "./users.js";
 
-export * from "./queue";
+export * from "./queue.js";
