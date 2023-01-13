@@ -1,12 +1,15 @@
-import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
 import { UserRepository } from "../../repository/userRepository.js";
+import { IPasswordEncoder } from "../../common/password/passwordEncoder.js";
+import { Argon2PasswordEncoder } from "../../common/password/argon2.js";
 
 export class UsersUseCase {
-  private _repository: UserRepository;
+  private readonly _repository: UserRepository;
+  private readonly _passwordEncoder: IPasswordEncoder;
 
   constructor(repo: UserRepository) {
     this._repository = repo;
+    this._passwordEncoder = new Argon2PasswordEncoder();
   }
 
   async allUsers() {
@@ -18,8 +21,11 @@ export class UsersUseCase {
   }
 
   async createUser(name: string, password: string) {
-    const hashed_password = await bcrypt.hash(password, 10);
+    const hashed_password = await this._passwordEncoder.EncodePassword(
+      password
+    );
     const res = await this._repository.create(name, hashed_password);
+
     if (!res) {
       throw new Error("CreateUserAccountFailError");
     }
@@ -31,7 +37,10 @@ export class UsersUseCase {
     if (!user) {
       throw new Error("UserNotFoundError");
     }
-    const checkPassword = await bcrypt.compare(password, user.password);
+    const checkPassword = await this._passwordEncoder.IsMatchPassword(
+      password,
+      user.password
+    );
     if (!checkPassword) {
       throw new Error("PasswordCompareError");
     }
