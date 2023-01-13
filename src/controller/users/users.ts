@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { UsersUseCase } from "../../service/users/main.js";
-import { PrismaUsersRepository } from "../../repository/prisma/users.js";
+import { UserRepository } from "../../repository/userRepository.js";
 
 export class UsersController {
   private _usersUsecase: UsersUseCase;
 
-  constructor(repo: PrismaUsersRepository) {
+  constructor(repo: UserRepository) {
     this._usersUsecase = new UsersUseCase(repo);
   }
 

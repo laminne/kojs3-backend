@@ -1,6 +1,8 @@
 import { enqueue, Job, HqResponse } from "./jobqueuemanager.js";
 import { renderMarkdownToHTML } from "../misc/mdrender.js";
 import { ContestsRepository } from "../../repository/contestRepository.js";
+import { SubmissionsRepository } from "../../repository/submissionRepository.js";
+import { QueueRepository } from "../../repository/QueueRepository";
 
 export type Submission = {
   code: string;
@@ -12,14 +14,17 @@ export type Submission = {
 
 export class ContestUseCase {
   private _contestsRepository: ContestsRepository;
-  private _submissionsRepository: any;
+  private _submissionsRepository: SubmissionsRepository;
+  private _queueRepository: QueueRepository;
 
   constructor(
     contestsRepository: ContestsRepository,
-    submissionsRepository: any
+    submissionsRepository: SubmissionsRepository,
+    queueRepository: QueueRepository
   ) {
     this._contestsRepository = contestsRepository;
     this._submissionsRepository = submissionsRepository;
+    this._queueRepository = queueRepository;
   }
 
   async allContests() {
@@ -90,7 +95,7 @@ export class ContestUseCase {
           const subres = await this._submissionsRepository.createSubmission(
             submission
           );
-          await this._submissionsRepository.SubmitQueue({
+          await this._queueRepository.SubmitQueue({
             status: res.status,
             submission: subres.id,
             hqId: res.id,

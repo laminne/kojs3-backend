@@ -2,6 +2,7 @@ import { prisma } from "./client.js";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/index.js";
 import { DBConnectionError } from "./error.js";
 import { SubmissionsRepository } from "../submissionRepository.js";
+import { PrismaClient } from "@prisma/client/index.js";
 
 // ToDo: これらの型を別ファイルにまとめる
 export type SubmissionState =
@@ -24,9 +25,15 @@ export type Submission = {
 };
 
 export class PrismaSubmissionsRepository implements SubmissionsRepository {
+  private readonly _prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this._prisma = prisma;
+  }
+
   public createSubmission = async (body: Submission) => {
     try {
-      return await prisma.submissions.create({
+      return await this._prisma.submissions.create({
         data: {
           code: body.code,
           tasks: { connect: { id: body.taskId } },
@@ -49,7 +56,7 @@ export class PrismaSubmissionsRepository implements SubmissionsRepository {
     state: SubmissionState
   ) => {
     // hqが発行するIDから提出を探す
-    const q = await prisma.queue.findUnique({
+    const q = await this._prisma.queue.findUnique({
       where: {
         hqId: id,
       },
@@ -74,7 +81,7 @@ export class PrismaSubmissionsRepository implements SubmissionsRepository {
     res: string,
     state: SubmissionState
   ) => {
-    return await prisma.submissions.update({
+    return await this._prisma.submissions.update({
       where: {
         id: id,
       },

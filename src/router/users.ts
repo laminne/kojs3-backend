@@ -1,9 +1,10 @@
 import express from "express";
 import { UsersController } from "../controller/users/users.js";
 import { PrismaUsersRepository } from "../repository/prisma/users.js";
+import { prisma } from "../repository/prisma/client.js";
 
 export const usersController: UsersController = new UsersController(
-  new PrismaUsersRepository()
+  new PrismaUsersRepository(prisma)
 );
 export const usersRouter = express.Router();
 

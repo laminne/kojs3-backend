@@ -1,24 +1,25 @@
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
+import { UserRepository } from "../../repository/userRepository.js";
 
 export class UsersUseCase {
-  private _repository: any;
+  private _repository: UserRepository;
 
-  constructor(repo: any) {
+  constructor(repo: UserRepository) {
     this._repository = repo;
   }
 
   async allUsers() {
-    return await this._repository.findAllUsers();
+    return await this._repository.findAll();
   }
 
   async getUser(userId: string) {
-    return await this._repository.findUserById(userId);
+    return await this._repository.findByID(userId);
   }
 
   async createUser(name: string, password: string) {
     const hashed_password = await bcrypt.hash(password, 10);
-    const res = await this._repository.createNewAccount(name, hashed_password);
+    const res = await this._repository.create(name, hashed_password);
     if (!res) {
       throw new Error("CreateUserAccountFailError");
     }
@@ -26,7 +27,7 @@ export class UsersUseCase {
   }
 
   async genJWTToken(name: string, password: string) {
-    const user = await this._repository.findUserByName(name);
+    const user = await this._repository.findByName(name);
     if (!user) {
       throw new Error("UserNotFoundError");
     }
