@@ -1,6 +1,6 @@
 import express from "express";
 import { UsersController } from "../controller/users/users.js";
-import { PrismaUsersRepository } from "../prisma/users.js";
+import { PrismaUsersRepository } from "../repository/prisma/users.js";
 
 export const usersController: UsersController = new UsersController(
   new PrismaUsersRepository()

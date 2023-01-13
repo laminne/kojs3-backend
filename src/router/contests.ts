@@ -1,9 +1,9 @@
 import express from "express";
 import { ContestController } from "../controller/contests/contests.js";
-import { prisma } from "../prisma/client.js";
+import { PrismaContestsRepository } from "../repository/prisma/contests.js";
 
 export const contestController: ContestController = new ContestController(
-  prisma
+  new PrismaContestsRepository()
 );
 
 export const contestsRouter = express.Router();

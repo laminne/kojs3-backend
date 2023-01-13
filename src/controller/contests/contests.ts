@@ -9,13 +9,13 @@ export class ContestController {
   }
 
   // すべてのコンテストを取得
-  async getAllContests(_req: Request, res: Response) {
+  public getAllContests = async (_req: Request, res: Response) => {
     const contests = await this._contestUsecase.allContests();
     res.json(contests);
     return;
-  }
+  };
 
-  async getOneContest(req: Request, res: Response) {
+  public getOneContest = async (req: Request, res: Response) => {
     let contest;
     try {
       contest = await this._contestUsecase.oneContest(req.params.contestId);
@@ -24,9 +24,9 @@ export class ContestController {
       return;
     }
     res.json(contest);
-  }
+  };
 
-  async getContestTasks(req: Request, res: Response) {
+  public getContestTasks = async (req: Request, res: Response) => {
     try {
       const tasks = await this._contestUsecase.contestTasks(
         req.params.contestId
@@ -36,9 +36,9 @@ export class ContestController {
     } catch (e) {
       res.status(400).send("エラーが発生しました");
     }
-  }
+  };
 
-  async getOneTask(req: Request, res: Response) {
+  public getOneTask = async (req: Request, res: Response) => {
     try {
       const tasks = await this._contestUsecase.oneContestTask(
         req.params.taskId
@@ -48,9 +48,9 @@ export class ContestController {
     } catch (e) {
       res.status(400).send("エラーが発生しました");
     }
-  }
+  };
 
-  async submission(req: Request, res: Response) {
+  public submission = async (req: Request, res: Response) => {
     const body = {
       code: req.body.code,
       taskId: req.body.taskId,
@@ -66,19 +66,19 @@ export class ContestController {
       console.log(e);
       res.status(400).send("エラーが発生しました");
     }
-  }
+  };
 
-  getAllSubmission(_req: Request, res: Response) {
+  public getAllSubmission = async (_req: Request, res: Response) => {
     const submissions = this._contestUsecase.allSubmissions();
     res.send(submissions);
     return;
-  }
+  };
 
-  async getOneSubmission(req: Request, res: Response) {
+  public getOneSubmission = async (req: Request, res: Response) => {
     const submission = await this._contestUsecase.getSubmission(
       req.params.submissionId
     );
     res.json(submission);
     return;
-  }
+  };
 }
