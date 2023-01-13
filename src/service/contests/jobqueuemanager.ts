@@ -15,12 +15,12 @@ export type HqResponse = {
   comment: string;
   createdAt: Date;
   err: string;
-  failture: boolean;
+  failure: boolean;
   finishedAt: Date;
   headers?: object;
   id: string;
   name: string;
-  outpit: string;
+  output: string;
   payload: object;
   running: boolean;
   startedAt?: Date;
@@ -48,7 +48,3 @@ export async function enqueue(job: Job): Promise<HqResponse | Error> {
     throw e;
   }
 }
-
-/*
-'{"url": "http://127.0.0.1:3000/", "payload": {"task_id": "000-000","code": "hello", "compiler_type": "test"}}'
-* */
