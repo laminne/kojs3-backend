@@ -1,19 +1,47 @@
 import { Request, Response } from "express";
-import { allUsers, getUser } from "../../service/users/main";
+import { UsersUseCase } from "../../service/users/main.js";
+import { PrismaUsersRepository } from "../../repository/prisma/users.js";
 
-export async function getAllUsers(_req: Request, res: Response) {
-  const users = await allUsers();
-  res.json(users);
-  return;
-}
+export class UsersController {
+  private _usersUsecase: UsersUseCase;
 
-export async function getUserData(req: Request, res: Response) {
-  const user = await getUser(req.params.userId);
-  res.json(user);
-  return;
-}
+  constructor(repo: PrismaUsersRepository) {
+    this._usersUsecase = new UsersUseCase(repo);
+  }
 
-export function getUserHistory(req: Request, res: Response) {
-  console.log(req.path);
-  res.send("Hello");
+  public getAllUsers = async (_req: Request, res: Response) => {
+    const users = await this._usersUsecase.allUsers();
+    res.json(users);
+    return;
+  };
+
+  public getUserData = async (req: Request, res: Response) => {
+    const user = await this._usersUsecase.getUser(req.params.userId);
+    res.json(user);
+    return;
+  };
+
+  public login = async (req: Request, res: Response) => {
+    const users = await this._usersUsecase.genJWTToken(
+      req.body.name,
+      req.body.password
+    );
+    const resBody = {
+      token: users,
+    };
+    res.json(resBody);
+    return;
+  };
+
+  public register = async (req: Request, res: Response) => {
+    const user = await this._usersUsecase.createUser(
+      req.body.name,
+      req.body.password
+    );
+    const resBody = {
+      token: user,
+    };
+    res.json(resBody);
+    return;
+  };
 }

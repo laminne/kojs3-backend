@@ -1,20 +1,17 @@
 /*
-   KEMOMIMI ONLINE JUDGE SYSTEM
-   |C| 2021 - 2022 Tatsuto Yamamoto
+   J "K" ONLINE JUDGE SYSTEM
+   (C) 2021 - 2023 Tatsuto Yamamoto
+   (C) 2022 - 2023 MCT-JOKEN
    This Software is licensed under MIT License.
  */
 
 import express from "express";
-import { usersRouter } from "./users/main";
-import { contestsRouter } from "./contests/main";
-import { runsRouter } from "./run/runs";
-import { authRouter } from "./auth/main";
-import "./ws/main";
-import { isTokenValid } from "../service/auth/main";
-const app = express();
-// Routeing
+import "./ws/main.js";
+import { router } from "../router/root.js";
 
-export function router() {
+export function startServer() {
+  const app = express();
+
   const allowCrossDomain = (
     req: express.Request,
     res: express.Response,
@@ -35,35 +32,19 @@ export function router() {
     }
   };
 
-  const checkToken = (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) => {
-    const t = req.headers.authorization;
-    if (!t) {
-      console.log("トークンがない");
-      res.sendStatus(401);
-      return;
-    }
-    if (t.split(" ")[0] == "Bearer") {
-      if (isTokenValid(t.split(" ")[1])) {
-        next();
-        return;
-      } else {
-        res.sendStatus(400).send("Your token is invalid");
-        return;
-      }
-    } else {
-      console.log(t, t.split(" ")[1]);
-      res.sendStatus(401);
-    }
-  };
   app.use(allowCrossDomain);
   app.use(express.json());
-  app.use("/users", checkToken, usersRouter);
-  app.use("/contests", checkToken, contestsRouter);
-  app.use("/runs", runsRouter);
-  app.use("/", authRouter);
-  app.listen(3080);
+  app.use("/api/v1", router);
+  app.listen(3090, () => {
+    console.log(" ____  _    _      _____  ____  _____ ");
+    console.log("|____|| | / /     |  _  ||____||  ___|");
+    console.log("   | || |/ /  ___ | | | |   | || |___ ");
+    console.log("   | || | <  |___|| | | |   | ||___  |");
+    console.log(" __| || |\\ \\      | |_| | __| | ___| |");
+    console.log("|____||_| \\_\\     |_____||____||_____|");
+    console.log("");
+    console.log("(C) 2021-2023 Tatsuto Yamamoto");
+    console.log("(C) 2022-2023 MCT-JOKEN");
+    console.log("🎀 Server started Port 3080");
+  });
 }

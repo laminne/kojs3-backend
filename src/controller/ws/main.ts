@@ -1,6 +1,6 @@
-import { WebSocket } from "ws";
+import { WebSocketServer } from "ws";
 
-const ws = new WebSocket.Server({ port: 8080 });
+const ws = new WebSocketServer({ port: 8090 });
 
 /* eslint @typescript-eslint/no-explicit-any:0 */
 let Connections: Array<any> = [];
