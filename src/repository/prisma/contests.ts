@@ -1,17 +1,18 @@
 import { prisma } from "./client.js";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/index.js";
 import { DBConnectionError } from "./error.js";
+import { ContestsRepository } from "../contestRepository.js";
 
-export class PrismaContestsRepository {
+export class PrismaContestsRepository implements ContestsRepository {
   async findAllSubmissions() {
     return await prisma.submissions.findMany({});
   }
 
-  async findAllContests() {
+  public findAllContests = async (): Promise<Array<any>> => {
     return await prisma.contest.findMany({});
-  }
+  };
 
-  async findContestById(id: string) {
+  public findByID = async (id: string): Promise<any> => {
     try {
       return await prisma.contest.findUnique({
         where: {
@@ -24,9 +25,9 @@ export class PrismaContestsRepository {
       }
       throw e;
     }
-  }
+  };
 
-  async findContestTaskById(id: string) {
+  public findTaskByID = async (id: string): Promise<any> => {
     try {
       return await prisma.tasks.findUnique({
         where: {
@@ -39,9 +40,9 @@ export class PrismaContestsRepository {
       }
       throw e;
     }
-  }
+  };
 
-  async findSubmissionById(id: string) {
+  public findSubmissionByID = async (id: string): Promise<any> => {
     try {
       return await prisma.submissions.findUnique({
         where: {
@@ -54,13 +55,15 @@ export class PrismaContestsRepository {
       }
       throw e;
     }
-  }
+  };
 
-  async SearchContestTasksById(id: string) {
+  public findAllContestTasks = async (
+    contestId: string
+  ): Promise<Array<any>> => {
     try {
       return await prisma.tasks.findMany({
         where: {
-          contestId: id,
+          contestId: contestId,
         },
       });
     } catch (e) {
@@ -69,5 +72,5 @@ export class PrismaContestsRepository {
       }
       throw e;
     }
-  }
+  };
 }

@@ -1,5 +1,5 @@
 import { prisma } from "./client.js";
-import { PrismaClientInitializationError } from "@prisma/client/runtime";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/index.js";
 import { DBConnectionError } from "./error.js";
 
 export type Submission = {

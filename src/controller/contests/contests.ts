@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
 import { ContestUseCase } from "../../service/contests/main.js";
+import { ContestsRepository } from "../../repository/contestRepository.js";
 
 export class ContestController {
   private _contestUsecase: ContestUseCase;
 
-  constructor(repository: any) {
-    this._contestUsecase = new ContestUseCase(repository);
+  constructor(repository: ContestsRepository, submissionsRepository: any) {
+    this._contestUsecase = new ContestUseCase(
+      repository,
+      submissionsRepository
+    );
   }
 
   // すべてのコンテストを取得

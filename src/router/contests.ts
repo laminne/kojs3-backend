@@ -1,9 +1,11 @@
 import express from "express";
 import { ContestController } from "../controller/contests/contests.js";
 import { PrismaContestsRepository } from "../repository/prisma/contests.js";
+import { PrismaSubmissionsRepository } from "../repository/prisma/submissions.js";
 
 export const contestController: ContestController = new ContestController(
-  new PrismaContestsRepository()
+  new PrismaContestsRepository(),
+  new PrismaSubmissionsRepository()
 );
 
 export const contestsRouter = express.Router();

@@ -1,5 +1,6 @@
 import { enqueue, Job, HqResponse } from "./jobqueuemanager.js";
 import { renderMarkdownToHTML } from "../misc/mdrender.js";
+import { ContestsRepository } from "../../repository/contestRepository.js";
 
 export type Submission = {
   code: string;
@@ -10,22 +11,27 @@ export type Submission = {
 };
 
 export class ContestUseCase {
-  private _repository: any;
+  private _contestsRepository: ContestsRepository;
+  private _submissionsRepository: any;
 
-  constructor(repository: any) {
-    this._repository = repository;
+  constructor(
+    contestsRepository: ContestsRepository,
+    submissionsRepository: any
+  ) {
+    this._contestsRepository = contestsRepository;
+    this._submissionsRepository = submissionsRepository;
   }
 
   async allContests() {
-    return await this._repository.findAllContests();
+    return await this._contestsRepository.findAllContests();
   }
 
   async oneContest(contestId: string) {
-    const res = await this._repository.findContestById(contestId);
+    const res = await this._contestsRepository.findByID(contestId);
     if (!res) {
       return;
     }
-    const i = this.isContestStarted(res.starting_time);
+    const i = ContestUseCase.isContestStarted(res.starting_time);
     if (!i) {
       throw new Error("ContestNotStartedError");
     }
@@ -34,19 +40,19 @@ export class ContestUseCase {
   }
 
   async contestTasks(contestId: string) {
-    return await this._repository.SearchContestTasksById(contestId);
+    return await this._contestsRepository.findAllContestTasks(contestId);
   }
 
   async oneContestTask(taskId: string) {
-    const res = await this._repository.findContestTaskById(taskId);
+    const res = await this._contestsRepository.findTaskByID(taskId);
     if (!res) {
       return;
     }
-    const r = await this._repository.findContestById(res.contestId);
+    const r = await this._contestsRepository.findByID(res.contestId);
     if (!r) {
       return;
     }
-    const i = this.isContestStarted(r.starting_time);
+    const i = ContestUseCase.isContestStarted(r.starting_time);
     if (!i) {
       throw new Error("ContestNotStartedError");
     }
@@ -81,8 +87,10 @@ export class ContestUseCase {
         const res = await enqueue(jobqueue);
         // Enqueue時の返り値に応じて動作を変える
         if (this.isHqResponse(res)) {
-          const subres = await this._repository.createSubmission(submission);
-          await this._repository.SubmitQueue({
+          const subres = await this._submissionsRepository.createSubmission(
+            submission
+          );
+          await this._submissionsRepository.SubmitQueue({
             status: res.status,
             submission: subres.id,
             hqId: res.id,
@@ -90,8 +98,10 @@ export class ContestUseCase {
           return subres;
         }
       } catch (e) {
-        const subres = await this._repository.createSubmission(submission);
-        const r = await this._repository.updateSubmissionStateById(
+        const subres = await this._submissionsRepository.createSubmission(
+          submission
+        );
+        const r = await this._submissionsRepository.updateSubmissionStateById(
           subres.id,
           "",
           "IE"
@@ -107,14 +117,14 @@ export class ContestUseCase {
   }
 
   async allSubmissions() {
-    return await this._repository.findAllSubmissions();
+    return await this._contestsRepository.findAllSubmissions();
   }
 
   async getSubmission(id: string) {
-    return await this._repository.findSubmissionById(id);
+    return await this._contestsRepository.findSubmissionByID(id);
   }
 
-  private isContestStarted(T: Date): boolean {
+  private static isContestStarted(T: Date): boolean {
     return T < new Date();
   }
 
