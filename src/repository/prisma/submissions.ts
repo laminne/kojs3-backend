@@ -1,19 +1,30 @@
 import { prisma } from "./client.js";
 import { PrismaClientInitializationError } from "@prisma/client/runtime/index.js";
 import { DBConnectionError } from "./error.js";
+import { SubmissionsRepository } from "../submissionRepository.js";
+
+// ToDo: これらの型を別ファイルにまとめる
+export type SubmissionState =
+  | "CE"
+  | "MLE"
+  | "TLE"
+  | "RE"
+  | "OLE"
+  | "IE"
+  | "WA"
+  | "AC"
+  | "WJ";
 
 export type Submission = {
   code: string;
   taskId: string;
   userId: string;
   compilerType: string;
-  state?: "CE" | "MLE" | "TLE" | "RE" | "OLE" | "IE" | "WA" | "AC" | "WJ";
+  state?: SubmissionState;
 };
 
-export class PrismaSubmissionsRepository {
-  async createSubmission(body: Submission) {
-    console.log(body);
-    // ToDo: ユーザーIDの固定をやめる
+export class PrismaSubmissionsRepository implements SubmissionsRepository {
+  public createSubmission = async (body: Submission) => {
     try {
       return await prisma.submissions.create({
         data: {
@@ -30,13 +41,13 @@ export class PrismaSubmissionsRepository {
       }
       throw e;
     }
-  }
+  };
 
-  async updateSubmissionStateByHqId(
+  public updateSubmissionStateByHqId = async (
     id: string,
     res: string,
-    state: "CE" | "MLE" | "TLE" | "RE" | "OLE" | "IE" | "WA" | "AC"
-  ) {
+    state: SubmissionState
+  ) => {
     // hqが発行するIDから提出を探す
     const q = await prisma.queue.findUnique({
       where: {
@@ -56,13 +67,13 @@ export class PrismaSubmissionsRepository {
         state: state,
       },
     });
-  }
+  };
 
-  async updateSubmissionStateById(
+  public updateSubmissionStateById = async (
     id: string,
     res: string,
-    state: "CE" | "MLE" | "TLE" | "RE" | "OLE" | "IE" | "WA" | "AC"
-  ) {
+    state: SubmissionState
+  ) => {
     return await prisma.submissions.update({
       where: {
         id: id,
@@ -72,5 +83,5 @@ export class PrismaSubmissionsRepository {
         state: state,
       },
     });
-  }
+  };
 }

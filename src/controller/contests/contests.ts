@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
 import { ContestUseCase } from "../../service/contests/main.js";
 import { ContestsRepository } from "../../repository/contestRepository.js";
+import { SubmissionsRepository } from "../../repository/submissionRepository.js";
 
 export class ContestController {
   private _contestUsecase: ContestUseCase;
 
-  constructor(repository: ContestsRepository, submissionsRepository: any) {
+  constructor(
+    repository: ContestsRepository,
+    submissionsRepository: SubmissionsRepository
+  ) {
     this._contestUsecase = new ContestUseCase(
       repository,
       submissionsRepository
