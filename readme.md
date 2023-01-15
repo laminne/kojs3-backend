@@ -1,6 +1,8 @@
 # JK-OJS
 ![](./docs/img/jk-ojs.jpg)
-(Illustration by T.Yamamoto)
+(Illustration by T.Yamamoto)  
+[![run test](https://github.com/mct-joken/kojs3-backend/actions/workflows/test.yml/badge.svg)](https://github.com/mct-joken/kojs3-backend/actions/workflows/test.yml)
+[![CodeQL](https://github.com/mct-joken/kojs3-backend/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/mct-joken/kojs3-backend/actions/workflows/github-code-scanning/codeql)
 
 競技プログラミング向けオンラインジャッジシステム, JK-OJSのスコアサーバーのバックエンドです.
 
