@@ -1,7 +1,7 @@
 # JK-OJS
 ![](./docs/img/jk-ojs.jpg)
 (Illustration by T.Yamamoto)
----
+
 競技プログラミング向けオンラインジャッジシステム, JK-OJSのスコアサーバーのバックエンドです.
 
 ## JK-OJSとは
@@ -31,7 +31,7 @@ JK-OJS Backendを動作させるには,以下のソフトウェアが必要で�
 
 ## Author
 Original Author: Copyright (C) 2021-2023 Tatsuto YAMAMOTO  
-JKOJS-Author(s): Copyright (C) 2022-2023 松江高専情報科学研究部
+JK-OJS Author(s): Copyright (C) 2022-2023 松江高専情報科学研究部
 
 ## License
 MIT

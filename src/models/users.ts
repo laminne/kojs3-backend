@@ -66,3 +66,11 @@ export class User {
     this._icon = value;
   }
 }
+
+export type userUpdateArgs = Partial<{
+  name: string;
+  password: string;
+  icon: string;
+  type: number;
+  email: string;
+}>;

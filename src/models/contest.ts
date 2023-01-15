@@ -1,4 +1,4 @@
-export class Contests {
+export class Contest {
   private readonly _id: string;
   private _title: string;
   private _description: string;

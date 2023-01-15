@@ -39,7 +39,7 @@ export function startServer() {
     console.log(" ____  _    _      _____  ____  _____ ");
     console.log("|____|| | / /     |  _  ||____||  ___|");
     console.log("   | || |/ /  ___ | | | |   | || |___ ");
-    console.log("   | || | <  |___|| | | |   | ||___  |");
+    console.log("   | || | (  |___|| | | |   | ||___  |");
     console.log(" __| || |\\ \\      | |_| | __| | ___| |");
     console.log("|____||_| \\_\\     |_____||____||_____|");
     console.log("");
@@ -48,3 +48,9 @@ export function startServer() {
     console.log("🎀 Server started Port 3080");
   });
 }
+/*
+
+
+
+
+*/

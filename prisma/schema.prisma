@@ -43,9 +43,10 @@ model Problem {
   memoryLimit Int
   timeLimit   Int
 
-  case      Case[]
-  Contest   Contest? @relation(fields: [contestId], references: [id])
-  contestId String?
+  case       Case[]
+  Contest    Contest?     @relation(fields: [contestId], references: [id])
+  contestId  String?
+  Submission Submission[]
 }
 
 model Case {
@@ -60,14 +61,16 @@ model Submission {
   id       String @id
   code     String
   language String
-  status   Int
+  status   String
   point    Int
 
   judgeStatus  JudgeStatus[]
   Contest      Contest       @relation(fields: [contestId], references: [id])
   contestId    String
-  Contestant   Contestant?   @relation(fields: [contestantId], references: [id])
-  contestantId String?
+  Contestant   Contestant    @relation(fields: [contestantId], references: [id])
+  contestantId String
+  Problem      Problem       @relation(fields: [problemId], references: [id])
+  problemId    String
 }
 
 model JudgeStatus {

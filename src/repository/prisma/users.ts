@@ -1,94 +1,121 @@
-import { PrismaClientInitializationError } from "@prisma/client/runtime/index.js";
-import { DBConnectionError } from "./error.js";
 import { UserRepository } from "../userRepository.js";
 import { PrismaClient } from "@prisma/client/index.js";
-
-export type User = {
-  id: string;
-  name: string;
-};
+import { Failure, Result, Success } from "../../common/result.js";
+import { User } from "../../models/users.js";
 
 export class PrismaUsersRepository implements UserRepository {
-  private readonly _prisma: PrismaClient;
+  private _prisma: PrismaClient;
 
-  constructor(prisma: PrismaClient) {
-    this._prisma = prisma;
+  constructor(prismaConnections: PrismaClient) {
+    this._prisma = prismaConnections;
   }
 
-  public findAll = async (): Promise<User[]> => {
-    const user = await this._prisma.user.findMany({});
-    const users: User[] = [];
-    for (const i in user) {
-      const tmp = {
-        id: user[i].id,
-        name: user[i].name,
-      };
-      users.push(tmp);
-    }
-    return users;
-  };
+  // PrismaのUserテーブルの型をUserオブジェクトに詰め替える
+  private static typeConverter(T: any): User {
+    return new User(T.id, T.name, T.password, T.type, T.email, T.icon);
+  }
 
-  // ToDo: 一つ下のメソッドと統合する
-  public findByID = async (id: string): Promise<User | undefined> => {
-    const user = await this._prisma.user.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    if (!user) {
-      return undefined;
-    } else {
-      return {
-        id: user.id,
-        name: user.name,
-      };
-    }
-  };
-
-  public getUser = async (id: string) => {
-    const user = await this._prisma.user.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    if (!user) {
-      return undefined;
-    } else {
-      return user;
-    }
-  };
-
-  public findByName = async (Name: string) => {
+  async createUser(
+    id: string,
+    name: string,
+    password: string,
+    icon: string,
+    type: number,
+    email: string
+  ): Promise<Result<User, Error>> {
+    let res;
     try {
-      const res = await this._prisma.user.findMany({
-        where: {
-          name: Name,
-        },
-      });
-      console.log(res, Name);
-      return res[0];
-    } catch (e) {
-      if (e instanceof PrismaClientInitializationError) {
-        throw new DBConnectionError();
-      }
-      throw e;
-    }
-  };
-
-  public create = async (name: string, hashed: string) => {
-    try {
-      return await this._prisma.user.create({
+      res = await this._prisma.user.create({
         data: {
+          id: id as string,
           name: name,
-          password: hashed,
+          password: password,
+          icon: icon,
+          type: type,
+          email: email,
         },
       });
     } catch (e) {
-      if (e instanceof PrismaClientInitializationError) {
-        console.log(e);
-        throw new DBConnectionError();
-      }
-      throw e;
+      console.log(e);
+      return new Failure(new Error());
     }
-  };
+    return new Success(PrismaUsersRepository.typeConverter(res));
+  }
+
+  async findAllUsers(): Promise<
+    Result<Array<User>, Error>
+    // eslint-disable-next-line indent
+  > {
+    let query;
+    try {
+      query = await this._prisma.user.findMany({});
+    } catch (e) {
+      return new Failure(new Error());
+    }
+
+    const res = query.map((n: any) => {
+      return PrismaUsersRepository.typeConverter(n);
+    });
+
+    return new Success(res);
+  }
+
+  async findUserByID(id: string): Promise<Result<User, Error>> {
+    let res;
+    try {
+      res = await this._prisma.user.findUnique({
+        where: {
+          id: id as string,
+        },
+      });
+    } catch (e) {
+      return new Failure(new Error());
+    }
+
+    if (!res) {
+      return new Failure(new Error());
+    }
+    return new Success(PrismaUsersRepository.typeConverter(res));
+  }
+
+  async findUserByName(name: string): Promise<Result<User, Error>> {
+    let res;
+    try {
+      res = await this._prisma.user.findUnique({
+        where: {
+          name: name,
+        },
+      });
+    } catch (e) {
+      return new Failure(new Error());
+    }
+    // ToDo: 存在しないときのエラーを出す
+
+    return new Success(PrismaUsersRepository.typeConverter(res));
+  }
+
+  async updateUser(
+    id: string,
+    args: Partial<{
+      name: string;
+      password: string;
+      icon: string;
+      type: number;
+      email: string;
+    }>
+  ): Promise<Result<User, Error>> {
+    let res;
+    try {
+      res = await this._prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: args,
+      });
+    } catch (e) {
+      return new Failure(new Error());
+    }
+
+    return new Success(PrismaUsersRepository.typeConverter(res));
+  }
 }

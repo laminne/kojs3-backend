@@ -1,15 +1,32 @@
-import { Submission, SubmissionState } from "./prisma/submissions.js";
+import { Result } from "../common/result.js";
+import { Submission, SubmissionState } from "../models/submissions.js";
 
 export interface SubmissionsRepository {
-  createSubmission(body: Submission): Promise<any>;
-  updateSubmissionStateByHqId(
+  createSubmission(arg: {
+    id: string;
+    contestID: string;
+    contestantID: string;
+    code: string;
+    language: string;
+    status: SubmissionState;
+    point: number;
+  }): Promise<Result<Submission, Error>>;
+
+  updateSubmission(
     id: string,
-    res: string,
-    state: SubmissionState
-  ): Promise<any>;
-  updateSubmissionStateById(
-    id: string,
-    res: string,
-    state: SubmissionState
-  ): Promise<any>;
+    arg: Partial<{
+      code: string;
+      language: string;
+      status: SubmissionState;
+      point: number;
+    }>
+  ): Promise<Result<Submission, Error>>;
+
+  findSubmissionByID(submissionID: string): Promise<Result<Submission, Error>>;
+  findSubmissionByContestantID(
+    contestantID: string
+  ): Promise<Result<Array<Submission>, Error>>;
+  findSubmissionByProblemID(
+    problemID: string
+  ): Promise<Result<Array<Submission>, Error>>;
 }

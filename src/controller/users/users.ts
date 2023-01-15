@@ -36,7 +36,10 @@ export class UsersController {
   public register = async (req: Request, res: Response) => {
     const user = await this._usersUsecase.createUser(
       req.body.name,
-      req.body.password
+      req.body.password,
+      req.body.icon,
+      req.body.type, // ToDo: ユーザーの権限設定
+      req.body.email
     );
     const resBody = {
       token: user,
