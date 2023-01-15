@@ -44,11 +44,13 @@ export class UsersUseCase {
     );
 
     if (res.isFailure()) {
-      throw new Error("CreateUserAccountFailError");
+      return new Error("CreateUserAccountFailError");
     }
+    // ToDo: トークンの発行をControllerに移植する
     return await this.genJWTToken(name, password);
   }
 
+  // ToDo: commonに移植する
   async genJWTToken(name: string, password: string) {
     const user = await this._repository.findUserByName(name);
     if (user.isFailure()) {
@@ -68,6 +70,7 @@ export class UsersUseCase {
   }
 }
 
+// ToDo: commonに移植する
 export const isTokenValid = (token: string): boolean => {
   const r = jsonwebtoken.verify(token, "123");
   if (!r) {
