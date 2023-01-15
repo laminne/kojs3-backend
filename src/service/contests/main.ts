@@ -5,6 +5,7 @@ import {
 import { SubmissionsRepository } from "../../repository/submissionRepository.js";
 import { Failure, Result, Success } from "../../common/result.js";
 import { Submission, SubmissionState } from "../../models/submissions.js";
+import { Problem } from "../../models/problems";
 
 export class ContestUseCase {
   private _contestsRepository: ContestsRepository;
@@ -25,31 +26,52 @@ export class ContestUseCase {
     return await this._contestsRepository.findAll();
   }
 
-  async oneContest(contestId: string) {
+  async getContestByID(contestId: string) {
     const res = await this._contestsRepository.findByID(contestId);
     if (res.isFailure()) {
       return new Failure(res.value);
     }
 
-    const i = ContestUseCase.isContestStarted(res.value.startAt);
-    if (!i) {
-      return new Failure("ContestNotStartedError");
+    return new Success(res.value);
+  }
+
+  async getContestProblemsByID(
+    contestId: string
+  ): Promise<Result<Array<Problem>, Error>> {
+    const r = await this._contestsRepository.findByID(contestId);
+    if (r.isFailure()) {
+      return new Failure(new Error());
+    }
+
+    if (!ContestUseCase.isContestStarted(new Date(r.value.startAt))) {
+      return new Failure(new Error("ContestIsNotStarted"));
+    }
+
+    const res = await this._problemRepository.findProblemsByContestID(
+      contestId
+    );
+    if (res.isFailure()) {
+      return new Failure(new Error());
     }
 
     return new Success(res.value);
   }
 
-  async contestTasks(contestId: string) {
-    return await this._contestsRepository.findByID(contestId);
-  }
-
-  async getContestProblem(problemID: string) {
+  async getContestProblem(problemID: string): Promise<Result<Problem, Error>> {
     const res = await this._problemRepository.findProblemByID(problemID);
     if (res.isFailure()) {
-      return;
+      return new Failure(res.value);
     }
 
-    return res;
+    const r = await this._contestsRepository.findByID(res.value.contestID);
+    if (r.isFailure()) {
+      return new Failure(new Error());
+    }
+    if (!ContestUseCase.isContestStarted(new Date(r.value.startAt))) {
+      return new Failure(new Error("ContestIsNotStarted"));
+    }
+
+    return new Success(res.value);
   }
 
   async getSubmissionByID(id: string) {

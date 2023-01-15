@@ -6,6 +6,7 @@ import {
 } from "../../repository/memory/contest";
 import { InmemorySubmissionsRepository } from "../../repository/memory/submission";
 import { Contest } from "../../models/contest";
+import { Problem } from "../../models/problems";
 
 describe("コンテスト", () => {
   const contest = new ContestUseCase(
@@ -26,7 +27,29 @@ describe("コンテスト", () => {
       ),
     ]),
     new InmemorySubmissionsRepository([]),
-    new InmemoryProblemRepository([], [])
+    new InmemoryProblemRepository(
+      [
+        new Problem(
+          "514",
+          "256",
+          "A - S+Q+L",
+          "標準入力で与えられる...",
+          300,
+          2000,
+          2000
+        ),
+        new Problem(
+          "321",
+          "123",
+          "C - 登校時間",
+          "Aさんは自分の学校に電車を使って...",
+          100,
+          1000,
+          200
+        ),
+      ],
+      []
+    )
   );
 
   it("コンテストをすべて取得できる", async () => {
@@ -51,7 +74,7 @@ describe("コンテスト", () => {
   });
 
   it("コンテストを1件取得できる", async () => {
-    const res = await contest.oneContest("123");
+    const res = await contest.getContestByID("123");
 
     expect(res.value).toStrictEqual(
       new Contest(
@@ -64,8 +87,29 @@ describe("コンテスト", () => {
     );
   });
 
-  it("開始時間より前のコンテストは取得できない", async () => {
-    expect(await contest.oneContest("256")).not.toStrictEqual(
+  it("開催前のコンテストの問題は取得できない", async () => {
+    const res = await contest.getContestProblemsByID("256");
+    expect(res.value).toStrictEqual(new Error("ContestIsNotStarted"));
+  });
+
+  it("開催後のコンテストの問題を取得できる", async () => {
+    const res = await contest.getContestProblemsByID("123");
+    expect(res.value).toStrictEqual([
+      new Problem(
+        "321",
+        "123",
+        "C - 登校時間",
+        "Aさんは自分の学校に電車を使って...",
+        100,
+        1000,
+        200
+      ),
+    ]);
+  });
+
+  it("開催前のコンテストを取得できる", async () => {
+    const res = await contest.getContestByID("256");
+    expect(res.value).toStrictEqual(
       new Contest(
         "256",
         "未来のコンテスト",
@@ -74,5 +118,15 @@ describe("コンテスト", () => {
         new Date("2100/01/01 00:00:00.000")
       )
     );
+  });
+
+  it("開催前のコンテストの問題を1つ取得することはできない", async () => {
+    const res = await contest.getContestProblem("514");
+    expect(res.value).toStrictEqual(new Error("ContestIsNotStarted"));
+  });
+
+  it("開催後のコンテストの問題を1つ取得することはできる", async () => {
+    const res = await contest.getContestProblem("321");
+    expect(res.value).not.toStrictEqual(new Error("ContestIsNotStarted"));
   });
 });
