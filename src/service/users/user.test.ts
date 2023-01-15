@@ -38,8 +38,6 @@ describe("UsersUseCase", async () => {
 
   it("全ユーザーを取得できる", async () => {
     const res = await users.allUsers();
-    console.log(res);
-
     expect(res).toBeTruthy();
   });
 });

@@ -15,7 +15,8 @@
     "prisma:dbpush": "prisma db push",
     "check": "tsc -p . --noEmit",
     "format": "prettier --write src/",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:ui": "vitest --ui"
   },
   "engines": {
     "node": ">=16.14"
@@ -34,15 +35,16 @@
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/node": "^16.11.6",
+    "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
-    "prettier": "^2.4.1",
+    "@vitest/ui": "^0.27.1",
     "eslint": "^8.1.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1",
     "ts-node": "^10.4.0",
-    "@types/ws": "^8.5.3",
     "ts-node-dev": "^2.0.0",
     "vitest": "^0.27.0"
   }

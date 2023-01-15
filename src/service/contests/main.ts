@@ -1,4 +1,3 @@
-import { renderMarkdownToHTML } from "../misc/mdrender.js";
 import {
   ContestsRepository,
   ProblemRepository,
@@ -34,11 +33,10 @@ export class ContestUseCase {
 
     const i = ContestUseCase.isContestStarted(res.value.startAt);
     if (!i) {
-      throw new Error("ContestNotStartedError");
+      return new Failure("ContestNotStartedError");
     }
 
-    res.value.description = await renderMarkdownToHTML(res.value.description);
-    return res;
+    return new Success(res.value);
   }
 
   async contestTasks(contestId: string) {
