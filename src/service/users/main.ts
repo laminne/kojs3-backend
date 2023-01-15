@@ -3,6 +3,8 @@ import { UserRepository } from "../../repository/userRepository.js";
 import { IPasswordEncoder } from "../../common/password/passwordEncoder.js";
 import { Argon2PasswordEncoder } from "../../common/password/argon2.js";
 import { SnowflakeIDGenerator } from "../../common/id/snowflakeIDGenerator.js";
+import { Result } from "../../common/result";
+import { User } from "../../models/users";
 
 export class UsersUseCase {
   private readonly _repository: UserRepository;
@@ -15,11 +17,11 @@ export class UsersUseCase {
     this._idGenerator = new SnowflakeIDGenerator();
   }
 
-  async allUsers() {
+  async allUsers(): Promise<Result<Array<User>, Error>> {
     return await this._repository.findAllUsers();
   }
 
-  async getUser(userId: string) {
+  async getUser(userId: string): Promise<Result<User, Error>> {
     return await this._repository.findUserByID(userId);
   }
 
@@ -29,7 +31,7 @@ export class UsersUseCase {
     icon: string,
     type: number,
     email: string
-  ) {
+  ): Promise<string | Error> {
     const hashed_password = await this._passwordEncoder.EncodePassword(
       password
     );

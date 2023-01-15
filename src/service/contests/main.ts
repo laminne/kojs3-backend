@@ -6,6 +6,7 @@ import { SubmissionsRepository } from "../../repository/submissionRepository.js"
 import { Failure, Result, Success } from "../../common/result.js";
 import { Submission, SubmissionState } from "../../models/submissions.js";
 import { Problem } from "../../models/problems";
+import { Contest } from "../../models/contest";
 
 export class ContestUseCase {
   private _contestsRepository: ContestsRepository;
@@ -22,11 +23,11 @@ export class ContestUseCase {
     this._problemRepository = problemRepository;
   }
 
-  async allContests() {
+  async allContests(): Promise<Result<Array<Contest>, Error>> {
     return await this._contestsRepository.findAll();
   }
 
-  async getContestByID(contestId: string) {
+  async getContestByID(contestId: string): Promise<Result<Contest, Error>> {
     const res = await this._contestsRepository.findByID(contestId);
     if (res.isFailure()) {
       return new Failure(res.value);
@@ -74,7 +75,7 @@ export class ContestUseCase {
     return new Success(res.value);
   }
 
-  async getSubmissionByID(id: string) {
+  async getSubmissionByID(id: string): Promise<Result<Submission, Error>> {
     return await this._submissionsRepository.findSubmissionByID(id);
   }
 
