@@ -73,6 +73,7 @@ export class ContestController {
       contestID: req.params.contestID,
       code: req.body.code,
       contestantID: req.params.contestantID,
+      problemID: req.params.problemID,
       language: req.body.language,
     });
 

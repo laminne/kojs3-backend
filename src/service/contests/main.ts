@@ -1,4 +1,3 @@
-import { renderMarkdownToHTML } from "../misc/mdrender.js";
 import {
   ContestsRepository,
   ProblemRepository,
@@ -34,11 +33,10 @@ export class ContestUseCase {
 
     const i = ContestUseCase.isContestStarted(res.value.startAt);
     if (!i) {
-      throw new Error("ContestNotStartedError");
+      return new Failure("ContestNotStartedError");
     }
 
-    res.value.description = await renderMarkdownToHTML(res.value.description);
-    return res;
+    return new Success(res.value);
   }
 
   async contestTasks(contestId: string) {
@@ -62,6 +60,7 @@ export class ContestUseCase {
     id: string;
     contestID: string;
     contestantID: string;
+    problemID: string;
     code: string;
     language: string;
   }): Promise<Result<Submission, Error>> => {
@@ -69,6 +68,7 @@ export class ContestUseCase {
       id: string;
       contestID: string;
       contestantID: string;
+      problemID: string;
       code: string;
       language: string;
       status: SubmissionState; // 提出直後は必ずWJ
@@ -77,6 +77,7 @@ export class ContestUseCase {
       id: arg.id,
       contestID: arg.contestID,
       contestantID: arg.contestantID,
+      problemID: arg.problemID,
       code: arg.code,
       language: arg.language,
       status: "WJ", // 提出直後は必ずWJ

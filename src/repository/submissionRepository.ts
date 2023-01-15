@@ -6,6 +6,7 @@ export interface SubmissionsRepository {
     id: string;
     contestID: string;
     contestantID: string;
+    problemID: string;
     code: string;
     language: string;
     status: SubmissionState;
