@@ -32,7 +32,7 @@ export class ContestController {
   public getOneContest = async (req: Request, res: Response) => {
     let contest;
     try {
-      contest = await this._contestUsecase.oneContest(req.params.contestId);
+      contest = await this._contestUsecase.getContestByID(req.params.contestId);
     } catch (e) {
       res.status(400).send("エラーが発生しました");
       return;
@@ -41,15 +41,15 @@ export class ContestController {
   };
 
   public getContestTasks = async (req: Request, res: Response) => {
-    try {
-      const tasks = await this._contestUsecase.contestTasks(
-        req.params.contestId
-      );
-      res.json(tasks);
-      return;
-    } catch (e) {
+    const tasks = await this._contestUsecase.getContestProblemsByID(
+      req.params.contestId
+    );
+
+    if (tasks.isFailure()) {
       res.status(400).send("エラーが発生しました");
     }
+
+    res.json(tasks.value);
   };
 
   public getOneTask = async (req: Request, res: Response) => {
