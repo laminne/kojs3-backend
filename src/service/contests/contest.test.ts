@@ -63,4 +63,9 @@ describe("コンテスト", () => {
       )
     );
   });
+
+  it("開催前のコンテストの問題は取得できない", async () => {
+    const res = () => {};
+    expect(res()).toStrictEqual("");
+  });
 });
