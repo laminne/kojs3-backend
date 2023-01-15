@@ -25,7 +25,7 @@ export class InmemoryUserRepository implements UserRepository {
 
     // Uniqueな値は重複してはいけない
     for (const v of this._users) {
-      if (v.id === user.id || v.name) {
+      if (v.id === user.id || v.name === user.name) {
         return new Failure(new Error("AlreadyExistsError"));
       }
     }

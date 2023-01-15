@@ -1,6 +1,13 @@
-import { ContestsRepository, contestUpdateArg } from "../contestRepository";
-import { Failure, Result, Success } from "../../common/result";
-import { Contest } from "../../models/contest";
+import {
+  caseUpdateArgs,
+  ContestsRepository,
+  contestUpdateArg,
+  ProblemRepository,
+  problemUpdateArgs,
+} from "../contestRepository.js";
+import { Failure, Result, Success } from "../../common/result.js";
+import { Contest } from "../../models/contest.js";
+import { Case, Problem } from "../../models/problems.js";
 
 export class InmemoryContestsRepository implements ContestsRepository {
   private readonly _contests: Set<Contest>;
@@ -10,15 +17,13 @@ export class InmemoryContestsRepository implements ContestsRepository {
   }
 
   async createContest(contest: Contest): Promise<Result<Contest, Error>> {
-    // 追加する前と後でsizeが同じなら,すでにデータが存在する
-    const sizeBeforeAdding = this._contests.size;
+    for (const v of this._contests) {
+      if (v.id === contest.id || v.title === contest.title) {
+        return new Failure(new Error("AlreadyExistsError"));
+      }
+    }
 
     this._contests.add(contest);
-
-    const sizeAfterAdding = this._contests.size;
-    if (sizeAfterAdding === sizeBeforeAdding) {
-      return new Failure(new Error("AlreadyExistsError"));
-    }
 
     return new Success(contest);
   }
@@ -78,6 +83,155 @@ export class InmemoryContestsRepository implements ContestsRepository {
     }
 
     await this.createContest(res.value);
+
+    return new Success(res.value);
+  }
+}
+
+export class InmemoryProblemRepository implements ProblemRepository {
+  private readonly _problem: Set<Problem>;
+  private readonly _case: Set<Case>;
+
+  constructor(
+    problemData: Array<Problem> | undefined,
+    caseData: Array<Case> | undefined
+  ) {
+    if (problemData) {
+      this._problem = new Set<Problem>(problemData);
+    } else {
+      this._problem = new Set<Problem>();
+    }
+
+    if (caseData) {
+      this._case = new Set<Case>(caseData);
+    } else {
+      this._case = new Set<Case>();
+    }
+  }
+
+  async createCase(c: Case): Promise<Result<Case, Error>> {
+    for (const v of this._case) {
+      if (v.id === c.id) {
+        return new Failure(new Error("AlreadyExistsError"));
+      }
+    }
+
+    this._case.add(c);
+
+    return new Success(c);
+  }
+
+  async createProblem(problem: Problem): Promise<Result<Problem, Error>> {
+    for (const v of this._problem) {
+      if (v.id === problem.id || v.title === problem.title) {
+        return new Failure(new Error("AlreadyExistsError"));
+      }
+    }
+
+    this._problem.add(problem);
+
+    return new Success(problem);
+  }
+
+  async deleteProblem(id: string): Promise<Result<Problem, Error>> {
+    const res = await this.findProblemByID(id);
+    // 存在しないときはエラー
+    if (res.isFailure()) {
+      return new Failure(res.value);
+    }
+
+    if (!this._problem.delete(res.value)) {
+      return new Failure(new Error("DataStoreError"));
+    }
+
+    return new Success(res.value);
+  }
+
+  async findCasesByProblemID(id: string): Promise<Result<Array<Case>, Error>> {
+    const res: Array<Case> = [];
+    for (const v of this._case) {
+      if (v.problemID === id) {
+        res.push(v);
+      }
+    }
+
+    return new Success(res);
+  }
+
+  async findProblemByID(problemID: string): Promise<Result<Problem, Error>> {
+    for (const v of this._problem) {
+      if (v.id === problemID) {
+        return new Success(v);
+      }
+    }
+
+    return new Failure(new Error("NotFoundError"));
+  }
+
+  async findProblemsByContestID(
+    contestID: string
+  ): Promise<Result<Array<Problem>, Error>> {
+    const res: Array<Problem> = [];
+    for (const v of this._problem) {
+      if (v.contestID === contestID) {
+        res.push(v);
+      }
+    }
+
+    return new Success(res);
+  }
+
+  async updateCase(
+    id: string,
+    args: caseUpdateArgs
+  ): Promise<Result<Case, Error>> {
+    for (const v of this._case) {
+      if (v.id === id) {
+        const res = v;
+        this._case.delete(v);
+
+        if (args.input) {
+          res.input = args.input;
+        }
+
+        if (args.output) {
+          res.output = args.output;
+        }
+        return new Success(res);
+      }
+    }
+
+    return new Failure(new Error("NotFoundError"));
+  }
+
+  async updateProblem(
+    id: string,
+    args: problemUpdateArgs
+  ): Promise<Result<Problem, Error>> {
+    const res = await this.findProblemByID(id);
+    if (res.isFailure()) {
+      return new Failure(new Error("NotFoundError"));
+    }
+
+    this._problem.delete(res.value);
+
+    if (args.title) {
+      res.value.title = args.title;
+    }
+    if (args.text) {
+      res.value.text = args.text;
+    }
+    if (args.timeLimit) {
+      res.value.timeLimit = args.timeLimit;
+    }
+    if (args.memoryLimit) {
+      res.value.memoryLimit = args.memoryLimit;
+    }
+    if (args.point) {
+      res.value.point = args.point;
+    }
+
+    await this.createProblem(res.value);
 
     return new Success(res.value);
   }

@@ -62,6 +62,7 @@ export class ContestUseCase {
     id: string;
     contestID: string;
     contestantID: string;
+    problemID: string;
     code: string;
     language: string;
   }): Promise<Result<Submission, Error>> => {
@@ -69,6 +70,7 @@ export class ContestUseCase {
       id: string;
       contestID: string;
       contestantID: string;
+      problemID: string;
       code: string;
       language: string;
       status: SubmissionState; // 提出直後は必ずWJ
@@ -77,6 +79,7 @@ export class ContestUseCase {
       id: arg.id,
       contestID: arg.contestID,
       contestantID: arg.contestantID,
+      problemID: arg.problemID,
       code: arg.code,
       language: arg.language,
       status: "WJ", // 提出直後は必ずWJ
