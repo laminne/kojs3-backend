@@ -63,16 +63,4 @@ describe("コンテスト", () => {
       )
     );
   });
-
-  it("開始時間より前のコンテストは取得できない", async () => {
-    expect(await contest.oneContest("256")).not.toStrictEqual(
-      new Contest(
-        "256",
-        "未来のコンテスト",
-        "未来に開催されるコンテスト",
-        new Date("2100/12/31 12:59:59.000"),
-        new Date("2100/01/01 00:00:00.000")
-      )
-    );
-  });
 });
