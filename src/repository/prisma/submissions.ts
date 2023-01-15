@@ -1,28 +1,7 @@
-import { prisma } from "./client.js";
-import { PrismaClientInitializationError } from "@prisma/client/runtime/index.js";
-import { DBConnectionError } from "./error.js";
 import { SubmissionsRepository } from "../submissionRepository.js";
 import { PrismaClient } from "@prisma/client/index.js";
-
-// ToDo: これらの型を別ファイルにまとめる
-export type SubmissionState =
-  | "CE"
-  | "MLE"
-  | "TLE"
-  | "RE"
-  | "OLE"
-  | "IE"
-  | "WA"
-  | "AC"
-  | "WJ";
-
-export type Submission = {
-  code: string;
-  taskId: string;
-  userId: string;
-  compilerType: string;
-  state?: SubmissionState;
-};
+import { Failure, Result, Success } from "../../common/result.js";
+import { Submission, SubmissionState } from "../../models/submissions.js";
 
 export class PrismaSubmissionsRepository implements SubmissionsRepository {
   private readonly _prisma: PrismaClient;
@@ -31,64 +10,135 @@ export class PrismaSubmissionsRepository implements SubmissionsRepository {
     this._prisma = prisma;
   }
 
-  public createSubmission = async (body: Submission) => {
+  private static typeConverter(t: any) {
+    return new Submission(
+      t.id,
+      t.contestID,
+      t.contestantID,
+      t.problemID,
+      t.code,
+      t.language,
+      t.status,
+      t.point
+    );
+  }
+
+  createSubmission = async (arg: {
+    id: string;
+    contestID: string;
+    contestantID: string;
+    problemID: string;
+    code: string;
+    language: string;
+    status: SubmissionState;
+    point: number;
+  }): Promise<Result<Submission, Error>> => {
+    let q;
     try {
-      return await this._prisma.submissions.create({
+      q = this._prisma.submission.create({
         data: {
-          code: body.code,
-          tasks: { connect: { id: body.taskId } },
-          User: { connect: { id: body.userId } },
-          state: "WJ", // 実行開始時は必ず WJ (Waiting for Judge)
-          response: "",
+          id: arg.id,
+          code: arg.code,
+          language: arg.language,
+          status: arg.status,
+          point: arg.point,
+          contestId: arg.contestID,
+          contestantId: arg.contestantID,
+          problemId: arg.problemID,
         },
       });
     } catch (e) {
-      if (e instanceof PrismaClientInitializationError) {
-        throw new DBConnectionError();
-      }
-      throw e;
+      return new Failure(new Error());
     }
+
+    const res = PrismaSubmissionsRepository.typeConverter(q);
+    return new Success(res);
   };
 
-  public updateSubmissionStateByHqId = async (
-    id: string,
-    res: string,
-    state: SubmissionState
-  ) => {
-    // hqが発行するIDから提出を探す
-    const q = await this._prisma.queue.findUnique({
-      where: {
-        hqId: id,
-      },
-    });
-
-    if (!q || !q.submissionId) {
-      return;
+  findSubmissionByContestantID = async (
+    contestantID: string
+  ): Promise<Result<Array<Submission>, Error>> => {
+    let q;
+    try {
+      q = await this._prisma.submission.findMany({
+        where: {
+          contestantId: contestantID,
+        },
+      });
+    } catch (e) {
+      return new Failure(new Error());
     }
-    return await prisma.submissions.update({
-      where: {
-        id: q.submissionId,
-      },
-      data: {
-        response: res,
-        state: state,
-      },
+
+    const res = q.map((j: any) => {
+      return PrismaSubmissionsRepository.typeConverter(j);
     });
+    return new Success(res);
   };
 
-  public updateSubmissionStateById = async (
-    id: string,
-    res: string,
-    state: SubmissionState
-  ) => {
-    return await this._prisma.submissions.update({
-      where: {
-        id: id,
-      },
-      data: {
-        response: res,
-        state: state,
-      },
+  findSubmissionByID = async (
+    submissionID: string
+  ): Promise<Result<Submission, Error>> => {
+    let q;
+    try {
+      q = await this._prisma.submission.findUnique({
+        where: {
+          id: submissionID,
+        },
+      });
+    } catch (e) {
+      return new Failure(new Error());
+    }
+    const res = PrismaSubmissionsRepository.typeConverter(q);
+    return new Success(res);
+  };
+
+  findSubmissionByProblemID = async (
+    problemID: string
+  ): Promise<Result<Array<Submission>, Error>> => {
+    let q;
+    try {
+      q = await this._prisma.submission.findMany({
+        where: {
+          problemId: problemID,
+        },
+      });
+    } catch (e) {
+      return new Failure(new Error());
+    }
+
+    const res = q.map((j: any) => {
+      return PrismaSubmissionsRepository.typeConverter(j);
     });
+    return new Success(res);
+  };
+
+  updateSubmission = async (
+    id: string,
+    arg: Partial<{
+      code: string;
+      language: string;
+      status: SubmissionState;
+      point: number;
+    }>
+  ): Promise<Result<Submission, Error>> => {
+    let q;
+    try {
+      q = await this._prisma.submission.update({
+        where: {
+          id: id,
+        },
+        data: {
+          code: arg.code,
+          language: arg.language,
+          status: arg.status,
+          point: arg.point,
+        },
+      });
+    } catch (e) {
+      return new Failure(new Error());
+    }
+
+    const res = PrismaSubmissionsRepository.typeConverter(q);
+    return new Success(res);
   };
 }
