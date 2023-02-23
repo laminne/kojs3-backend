@@ -106,8 +106,8 @@ export class ContestController {
       id: id,
       contestID: req.params.contestID,
       code: req.body.code,
-      contestantID: req.params.contestantID,
-      problemID: req.params.problemID,
+      contestantID: "", // FIXME: 決め打ちやめる
+      problemID: req.body.problemID,
       language: req.body.language,
     });
 
@@ -117,7 +117,7 @@ export class ContestController {
       return res.status(400).send("");
     }
 
-    return res.status(204);
+    return res.status(204).send("");
   };
 
   // コンテストの提出を1つ取得

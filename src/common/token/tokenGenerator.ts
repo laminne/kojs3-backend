@@ -1,4 +1,5 @@
-import * as jwt from "jsonwebtoken";
+import jsonwebtoken from "jsonwebtoken";
+const { sign } = jsonwebtoken;
 import { Result, Success } from "../result.js";
 import { Snowflake } from "../id/snowflakeID.js";
 
@@ -14,10 +15,11 @@ export class JWTTokenGenerator implements TokenGenerator {
   }
 
   async generate(uid: Snowflake): Promise<Result<string, Error>> {
+    console.log(uid);
     const payload = {
       sub: uid,
     };
-    const res = jwt.sign(payload, this.privateKey, { algorithm: "RS256" });
+    const res = sign(payload, this.privateKey, { algorithm: "RS256" });
     return new Success(res);
   }
 }

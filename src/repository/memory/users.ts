@@ -1,6 +1,6 @@
 import { UserRepository } from "../userRepository.js";
-import { User, userUpdateArgs } from "../../models/users";
-import { Failure, Result, Success } from "../../common/result";
+import { User, userUpdateArgs } from "../../models/users.js";
+import { Failure, Result, Success } from "../../common/result.js";
 
 export class InmemoryUserRepository implements UserRepository {
   private readonly _users: Set<User>;

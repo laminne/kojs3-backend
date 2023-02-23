@@ -143,23 +143,15 @@ export class ContestUseCase {
     code: string;
     language: string;
   }): Promise<Result<Submission, Error>> => {
-    const req: {
-      id: string;
-      contestID: string;
-      contestantID: string;
-      problemID: string;
-      code: string;
-      language: string;
-      status: SubmissionState; // 提出直後は必ずWJ
-      point: 0;
-    } = {
+    const wj: SubmissionState = "WJ";
+    const req = {
       id: arg.id,
       contestID: arg.contestID,
       contestantID: arg.contestantID,
       problemID: arg.problemID,
       code: arg.code,
       language: arg.language,
-      status: "WJ", // 提出直後は必ずWJ
+      status: wj, // 提出直後は必ずWJ
       point: 0,
     };
 
