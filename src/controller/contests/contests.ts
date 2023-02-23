@@ -7,6 +7,7 @@ import {
 import { SubmissionsRepository } from "../../repository/submissionRepository.js";
 import { SnowflakeIDGenerator } from "../../common/id/snowflakeIDGenerator.js";
 import { ContestSerializer } from "./contestSerializer.js";
+import { Snowflake } from "../../common/id/snowflakeID";
 
 export class ContestController {
   private _contestUsecase: ContestUseCase;
@@ -49,6 +50,25 @@ export class ContestController {
     return res.json(r);
   };
 
+  // コンテストの問題を作成
+  public createContestProblem = async (req: Request, res: Response) => {
+    console.log(req.body.limits);
+    const p = await this._contestUsecase.createContestProblem(
+      req.params.contestId as Snowflake,
+      req.body.title,
+      req.body.text,
+      req.body.limits.memory,
+      req.body.limits.time
+    );
+    if (p.isFailure()) {
+      return res.status(400);
+    }
+
+    return res
+      .status(200)
+      .json(this._serializer.parseCreateContestProblemResponse(p.value));
+  };
+
   // コンテストの問題一覧を取得
   public getContestProblems = async (req: Request, res: Response) => {
     const tasks = await this._contestUsecase.getContestProblemsByID(
@@ -72,7 +92,9 @@ export class ContestController {
       return res.status(400).send("");
     }
 
-    return this._serializer.parseGetContestProblem(tasks.value);
+    return res
+      .status(200)
+      .json(this._serializer.parseGetContestProblem(tasks.value));
   };
 
   // 問題の回答を提出
@@ -84,8 +106,8 @@ export class ContestController {
       id: id,
       contestID: req.params.contestID,
       code: req.body.code,
-      contestantID: req.params.contestantID,
-      problemID: req.params.problemID,
+      contestantID: "", // FIXME: 決め打ちやめる
+      problemID: req.body.problemID,
       language: req.body.language,
     });
 
@@ -95,7 +117,7 @@ export class ContestController {
       return res.status(400).send("");
     }
 
-    return res.status(204);
+    return res.status(204).send("");
   };
 
   // コンテストの提出を1つ取得
