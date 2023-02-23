@@ -35,7 +35,7 @@ export function startServer() {
   app.use(allowCrossDomain);
   app.use(express.json());
   app.use("/api/v1", router);
-  app.listen(3090, () => {
+  app.listen(3080, () => {
     console.log("🎀 Server started Port 3080");
   });
 }

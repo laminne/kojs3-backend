@@ -6,9 +6,11 @@ import {
 } from "../../repository/contestRepository.js";
 import { SubmissionsRepository } from "../../repository/submissionRepository.js";
 import { SnowflakeIDGenerator } from "../../common/id/snowflakeIDGenerator.js";
+import { ContestSerializer } from "./contestSerializer.js";
 
 export class ContestController {
   private _contestUsecase: ContestUseCase;
+  private _serializer: ContestSerializer;
 
   constructor(
     contestsRepository: ContestsRepository,
@@ -20,51 +22,61 @@ export class ContestController {
       submissionRepository,
       problemRepository
     );
+    this._serializer = new ContestSerializer();
   }
-
   // すべてのコンテストを取得
   public getAllContests = async (_req: Request, res: Response) => {
     const contests = await this._contestUsecase.allContests();
-    res.json(contests);
-    return;
-  };
-
-  public getOneContest = async (req: Request, res: Response) => {
-    let contest;
-    try {
-      contest = await this._contestUsecase.getContestByID(req.params.contestId);
-    } catch (e) {
-      res.status(400).send("エラーが発生しました");
-      return;
+    if (contests.isFailure()) {
+      return res.status(500);
     }
-    res.json(contest);
+
+    const r = this._serializer.parseGetAllContestsResponse(contests.value);
+    return res.json(r);
   };
 
-  public getContestTasks = async (req: Request, res: Response) => {
+  // コンテストを一つ取得
+  public getContest = async (req: Request, res: Response) => {
+    const contest = await this._contestUsecase.getContestByID(
+      req.params.contestId
+    );
+
+    if (contest.isFailure()) {
+      // ToDo: エラー型をどうにかする
+      return res.status(404).send("");
+    }
+    const r = this._serializer.parseGetContestResponse(contest.value);
+    return res.json(r);
+  };
+
+  // コンテストの問題一覧を取得
+  public getContestProblems = async (req: Request, res: Response) => {
     const tasks = await this._contestUsecase.getContestProblemsByID(
       req.params.contestId
     );
 
     if (tasks.isFailure()) {
-      res.status(400).send("エラーが発生しました");
+      return res.status(400).send("エラーが発生しました");
     }
-
-    res.json(tasks.value);
+    const r = this._serializer.parseGetContestProblemsResponse(tasks.value);
+    return res.json(r);
   };
 
-  public getOneTask = async (req: Request, res: Response) => {
-    try {
-      const tasks = await this._contestUsecase.getContestProblem(
-        req.params.taskId
-      );
-      res.json(tasks);
-      return;
-    } catch (e) {
-      res.status(400).send("エラーが発生しました");
+  // コンテストの問題を1つ取得
+  public getContestProblem = async (req: Request, res: Response) => {
+    const tasks = await this._contestUsecase.getContestProblem(
+      req.params.taskId
+    );
+
+    if (tasks.isFailure()) {
+      return res.status(400).send("");
     }
+
+    return this._serializer.parseGetContestProblem(tasks.value);
   };
 
-  public submit = async (req: Request, res: Response) => {
+  // 問題の回答を提出
+  public createSubmission = async (req: Request, res: Response) => {
     const idGenerator = new SnowflakeIDGenerator();
     const id = idGenerator.newID(new Date());
 
@@ -77,13 +89,17 @@ export class ContestController {
       language: req.body.language,
     });
 
-    // ToDo: データの詰め直しをする
-    res.send(resp.value);
+    if (resp.isFailure()) {
+      // ToDo: リクエスト形式が不正なときのレスポンスを定義する
+      // ToDo: Knock Outを実装する
+      return res.status(400).send("");
+    }
 
-    res.status(400).send("エラーが発生しました");
+    return res.status(204);
   };
 
-  public getOneSubmission = async (req: Request, res: Response) => {
+  // コンテストの提出を1つ取得
+  public getSubmission = async (req: Request, res: Response) => {
     const submission = await this._contestUsecase.getSubmissionByID(
       req.params.submissionId
     );
