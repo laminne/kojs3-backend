@@ -24,7 +24,11 @@ export class ContestUseCase {
   }
 
   async allContests(): Promise<Result<Array<Contest>, Error>> {
-    return await this._contestsRepository.findAll();
+    const res = await this._contestsRepository.findAll();
+    if (res.isFailure()) {
+      return new Failure(res.value);
+    }
+    return new Success(res.value);
   }
 
   async getContestByID(contestId: string): Promise<Result<Contest, Error>> {
@@ -76,7 +80,11 @@ export class ContestUseCase {
   }
 
   async getSubmissionByID(id: string): Promise<Result<Submission, Error>> {
-    return await this._submissionsRepository.findSubmissionByID(id);
+    const res = await this._submissionsRepository.findSubmissionByID(id);
+    if (res.isFailure()) {
+      return new Failure(res.value);
+    }
+    return new Success(res.value);
   }
 
   submit = async (arg: {

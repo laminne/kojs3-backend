@@ -6,8 +6,8 @@
  */
 
 import express from "express";
-import "./ws/main.js";
-import { router } from "../router/root.js";
+import "../controller/ws/main.js";
+import { router } from "./root.js";
 
 export function startServer() {
   const app = express();
@@ -36,15 +36,6 @@ export function startServer() {
   app.use(express.json());
   app.use("/api/v1", router);
   app.listen(3090, () => {
-    console.log(" ____  _    _      _____  ____  _____ ");
-    console.log("|____|| | / /     |  _  ||____||  ___|");
-    console.log("   | || |/ /  ___ | | | |   | || |___ ");
-    console.log("   | || | (  |___|| | | |   | ||___  |");
-    console.log(" __| || |\\ \\      | |_| | __| | ___| |");
-    console.log("|____||_| \\_\\     |_____||____||_____|");
-    console.log("");
-    console.log("(C) 2021-2023 Tatsuto Yamamoto");
-    console.log("(C) 2022-2023 MCT-JOKEN");
     console.log("🎀 Server started Port 3080");
   });
 }

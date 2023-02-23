@@ -11,12 +11,12 @@ export class ContestController {
   private _contestUsecase: ContestUseCase;
 
   constructor(
-    repository: ContestsRepository,
+    contestsRepository: ContestsRepository,
     submissionRepository: SubmissionsRepository,
     problemRepository: ProblemRepository
   ) {
     this._contestUsecase = new ContestUseCase(
-      repository,
+      contestsRepository,
       submissionRepository,
       problemRepository
     );

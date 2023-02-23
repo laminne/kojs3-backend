@@ -1,10 +1,10 @@
-import jsonwebtoken from "jsonwebtoken";
 import { UserRepository } from "../../repository/userRepository.js";
 import { IPasswordEncoder } from "../../common/password/passwordEncoder.js";
 import { Argon2PasswordEncoder } from "../../common/password/argon2.js";
 import { SnowflakeIDGenerator } from "../../common/id/snowflakeIDGenerator.js";
-import { Result } from "../../common/result";
-import { User } from "../../models/users";
+import { Failure, Result, Success } from "../../common/result.js";
+import { User, userUpdateArgs } from "../../models/users.js";
+import { Snowflake } from "../../common/id/snowflakeID.js";
 
 export class UsersUseCase {
   private readonly _repository: UserRepository;
@@ -31,7 +31,7 @@ export class UsersUseCase {
     icon: string,
     type: number,
     email: string
-  ): Promise<string | Error> {
+  ): Promise<Result<User, Error>> {
     const hashed_password = await this._passwordEncoder.EncodePassword(
       password
     );
@@ -46,38 +46,22 @@ export class UsersUseCase {
     );
 
     if (res.isFailure()) {
-      return new Error("CreateUserAccountFailError");
+      return new Failure(new Error("CreateUserAccountFailError"));
     }
-    // ToDo: トークンの発行をControllerに移植する
-    return await this.genJWTToken(name, password);
+
+    return new Success(res.value);
   }
 
-  // ToDo: commonに移植する
-  async genJWTToken(name: string, password: string) {
-    const user = await this._repository.findUserByName(name);
-    if (user.isFailure()) {
-      throw new Error("");
+  async updateUser(
+    id: Snowflake,
+    args: userUpdateArgs
+  ): Promise<Result<User, Error>> {
+    const res = await this._repository.updateUser(id, args);
+
+    if (res.isFailure()) {
+      return new Failure(res.value);
     }
-    const checkPassword = await this._passwordEncoder.IsMatchPassword(
-      password,
-      user.value.password
-    );
-    if (!checkPassword) {
-      throw new Error("PasswordCompareError");
-    }
-    const data = {
-      uid: user.value.id,
-    };
-    return jsonwebtoken.sign(data, "123", { algorithm: "HS256" });
+
+    return new Success(res.value);
   }
 }
-
-// ToDo: commonに移植する
-export const isTokenValid = (token: string): boolean => {
-  const r = jsonwebtoken.verify(token, "123");
-  if (!r) {
-    return false;
-  } else {
-    return true;
-  }
-};
