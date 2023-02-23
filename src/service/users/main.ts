@@ -5,16 +5,22 @@ import { SnowflakeIDGenerator } from "../../common/id/snowflakeIDGenerator.js";
 import { Failure, Result, Success } from "../../common/result.js";
 import { User, userUpdateArgs } from "../../models/users.js";
 import { Snowflake } from "../../common/id/snowflakeID.js";
+import {
+  JWTTokenGenerator,
+  TokenGenerator,
+} from "../../common/token/tokenGenerator.js";
 
 export class UsersUseCase {
   private readonly _repository: UserRepository;
   private readonly _passwordEncoder: IPasswordEncoder;
   private readonly _idGenerator: SnowflakeIDGenerator;
+  private readonly _tokenGenerator: TokenGenerator;
 
-  constructor(repo: UserRepository) {
+  constructor(repo: UserRepository, key: string) {
     this._repository = repo;
     this._passwordEncoder = new Argon2PasswordEncoder();
     this._idGenerator = new SnowflakeIDGenerator();
+    this._tokenGenerator = new JWTTokenGenerator(key);
   }
 
   async allUsers(): Promise<Result<Array<User>, Error>> {
@@ -63,5 +69,27 @@ export class UsersUseCase {
     }
 
     return new Success(res.value);
+  }
+
+  async login(name: string, pass: string): Promise<Result<string, Error>> {
+    // ユーザー情報を取ってくる
+    const u = await this._repository.findUserByName(name);
+    if (u.isFailure()) {
+      return new Failure(u.value);
+    }
+    // pwを比較
+    const p = await this._passwordEncoder.IsMatchPassword(
+      pass,
+      u.value.password
+    );
+    if (!p) {
+      return new Failure(new Error("password is not matched"));
+    }
+    // OKならトークン返す
+    const token = await this._tokenGenerator.generate(u.value.id as Snowflake);
+    if (token.isFailure()) {
+      return new Failure(new Error("failed to generate access token"));
+    }
+    return new Success(token.value);
   }
 }

@@ -1,7 +1,6 @@
 import { authRouter, usersRouter } from "./users.js";
 import { contestsRouter } from "./contests.js";
 import express from "express";
-import { isTokenValid } from "../service/users/main.js";
 
 const checkToken = (
   req: express.Request,
@@ -27,6 +26,11 @@ const checkToken = (
     res.sendStatus(401);
   }
 };
+
+// FIXME: tokenの判定を書く
+function isTokenValid(_: string): boolean {
+  return true;
+}
 
 export const router = express.Router();
 router.use("/users", checkToken, usersRouter);

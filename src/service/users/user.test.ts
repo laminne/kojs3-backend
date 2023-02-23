@@ -3,7 +3,7 @@ import { UsersUseCase } from "./main";
 import { InmemoryUserRepository } from "../../repository/memory/users";
 
 describe("UsersUseCase", async () => {
-  const users = new UsersUseCase(new InmemoryUserRepository([]));
+  const users = new UsersUseCase(new InmemoryUserRepository([]), "");
 
   it("ユーザー作成できる", async () => {
     const res = await users.createUser(

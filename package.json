@@ -6,7 +6,7 @@
   "author": "Tatsuto Yamamoto <me@laminne33569.net>, MCT-JOKEN",
   "license": "MIT",
   "scripts": {
-    "start": "tsc -p . --noImplicitAny && echo *build done* &&node --enable-source-maps ./build/main.js",
+    "start": "tsc -p . --noImplicitAny && echo *build done* &&node --enable-source-maps ./build/src/main.js",
     "build": "tsc -p . --noImplicitAny",
     "lint": "eslint --ignore-path .gitignore 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint --ignore-path .gitignore 'src/**/*.{js,jsx,ts,tsx}' --fix",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
-    "@types/jsonwebtoken": "^8.5.5",
+    "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^16.11.6",
     "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
