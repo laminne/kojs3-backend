@@ -16,18 +16,20 @@ export const contestController: ContestController = new ContestController(
 export const contestsRouter = express.Router();
 
 contestsRouter.route("/").get(contestController.getAllContests);
-contestsRouter.route("/:contestId").get(contestController.getOneContest);
+contestsRouter.route("/:contestId").get(contestController.getContest);
 
 contestsRouter
-  .route("/:contestId/tasks")
-  .get(contestController.getContestTasks);
+  .route("/:contestId/problems")
+  .get(contestController.getContestProblems);
 
 contestsRouter
-  .route("/:contestId/tasks/:taskId")
-  .get(contestController.getOneTask);
+  .route("/:contestId/problems/:taskId")
+  .get(contestController.getContestProblem);
 
-contestsRouter.route("/:contestId/submit").post(contestController.submit);
+contestsRouter
+  .route("/:contestId/submissions")
+  .post(contestController.createSubmission);
 
 contestsRouter
   .route("/:contestId/submissions/:submissionId")
-  .get(contestController.getOneSubmission);
+  .get(contestController.getSubmission);

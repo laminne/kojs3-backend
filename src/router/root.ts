@@ -1,6 +1,7 @@
 import { authRouter, usersRouter } from "./users.js";
 import { contestsRouter } from "./contests.js";
 import express from "express";
+import { problemsRouter } from "./problems.js";
 
 const checkToken = (
   req: express.Request,
@@ -35,4 +36,5 @@ function isTokenValid(_: string): boolean {
 export const router = express.Router();
 router.use("/users", checkToken, usersRouter);
 router.use("/contests", checkToken, contestsRouter);
+router.use("/problems", checkToken, problemsRouter);
 router.use("/", authRouter);

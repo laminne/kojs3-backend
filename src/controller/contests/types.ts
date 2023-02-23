@@ -25,6 +25,8 @@ export type GetContestResponseJSON = {
   updatedAt?: string;
 };
 
+export type GetAllContestsResponseJSON = Array<GetContestResponseJSON>;
+
 export type CreateProblemSubmissionRequestJSON = {
   problemID: string;
   code: string;

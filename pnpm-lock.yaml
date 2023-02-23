@@ -12,6 +12,8 @@ specifiers:
   argon2: ^0.30.3
   axios: ^0.24.0
   bcrypt: ^5.0.1
+  date-fns: ^2.29.3
+  date-fns-tz: ^2.0.0
   eslint: ^8.1.0
   eslint-config-prettier: ^8.3.0
   eslint-plugin-import: ^2.25.2
@@ -30,6 +32,8 @@ dependencies:
   argon2: 0.30.3
   axios: 0.24.0
   bcrypt: 5.1.0
+  date-fns: 2.29.3
+  date-fns-tz: 2.0.0_date-fns@2.29.3
   express: 4.18.2
   jsonwebtoken: 9.0.0
   typescript: 4.9.5
@@ -943,6 +947,19 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
+
+  /date-fns-tz/2.0.0_date-fns@2.29.3:
+    resolution: {integrity: sha512-OAtcLdB9vxSXTWHdT8b398ARImVwQMyjfYGkKD2zaGpHseG2UPHbHjXELReErZFxWdSLph3c2zOaaTyHfOhERQ==}
+    peerDependencies:
+      date-fns: '>=2.0.0'
+    dependencies:
+      date-fns: 2.29.3
+    dev: false
+
+  /date-fns/2.29.3:
+    resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
+    engines: {node: '>=0.11'}
+    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
