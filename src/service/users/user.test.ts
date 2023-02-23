@@ -33,7 +33,7 @@ describe("UsersUseCase", async () => {
       "me@example.jp"
     );
 
-    expect(res).toStrictEqual(new Error("CreateUserAccountFailError"));
+    expect(res.value).toStrictEqual(new Error("CreateUserAccountFailError"));
   });
 
   it("全ユーザーを取得できる", async () => {
