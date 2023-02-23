@@ -5,3 +5,4 @@ build
 .idea
 .db
 /prisma/dev.db
+*.pem
