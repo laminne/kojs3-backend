@@ -5,13 +5,16 @@ import {
 import { SubmissionsRepository } from "../../repository/submissionRepository.js";
 import { Failure, Result, Success } from "../../common/result.js";
 import { Submission, SubmissionState } from "../../models/submissions.js";
-import { Problem } from "../../models/problems";
-import { Contest } from "../../models/contest";
+import { Problem } from "../../models/problems.js";
+import { Contest } from "../../models/contest.js";
+import { Snowflake } from "../../common/id/snowflakeID.js";
+import { SnowflakeIDGenerator } from "../../common/id/snowflakeIDGenerator.js";
 
 export class ContestUseCase {
   private _contestsRepository: ContestsRepository;
   private _submissionsRepository: SubmissionsRepository;
   private _problemRepository: ProblemRepository;
+  private _idGenerator: SnowflakeIDGenerator;
 
   constructor(
     contestsRepository: ContestsRepository,
@@ -21,6 +24,7 @@ export class ContestUseCase {
     this._contestsRepository = contestsRepository;
     this._submissionsRepository = submissionsRepository;
     this._problemRepository = problemRepository;
+    this._idGenerator = new SnowflakeIDGenerator();
   }
 
   async allContests(): Promise<Result<Array<Contest>, Error>> {
@@ -74,6 +78,50 @@ export class ContestUseCase {
     }
     if (!ContestUseCase.isContestStarted(new Date(r.value.startAt))) {
       return new Failure(new Error("ContestIsNotStarted"));
+    }
+
+    return new Success(res.value);
+  }
+
+  async createContestProblem(
+    contestID: Snowflake,
+    title: string,
+    text: string,
+    memoryLimit: number,
+    timeLimit: number
+  ) {
+    if (
+      memoryLimit < 0 ||
+      memoryLimit > 1024 ||
+      timeLimit < 0 ||
+      timeLimit > 2000
+    ) {
+      return new Failure(new Error("invalid limit"));
+    }
+    const id = this._idGenerator.newID(new Date());
+    // ToDo: Pointの自動計算
+    const res = await this._problemRepository.createProblem(
+      new Problem(id, contestID, title, text, 0, memoryLimit, timeLimit)
+    );
+    if (res.isFailure()) {
+      return new Failure(res.value);
+    }
+
+    return new Success(res.value);
+  }
+
+  async updateContestProblem(
+    id: Snowflake,
+    arg: {
+      title?: string;
+      text?: string;
+      memoryLimit?: number;
+      timeLimit?: number;
+    }
+  ) {
+    const res = await this._problemRepository.updateProblem(id, arg);
+    if (res.isFailure()) {
+      return new Failure(res.value);
     }
 
     return new Success(res.value);

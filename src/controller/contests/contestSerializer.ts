@@ -8,7 +8,6 @@ import {
 } from "./types";
 import { Problem } from "../../models/problems.js";
 import { DateObjectToISODate } from "../../common/time.js";
-
 export class ContestSerializer {
   parseGetAllContestsResponse(q: Array<Contest>): GetAllContestsResponseJSON {
     return q.map((c: Contest): GetContestResponseJSON => {
@@ -57,6 +56,18 @@ export class ContestSerializer {
   }
 
   parseGetContestProblem(q: Problem): GetProblemResponseJSON {
+    return {
+      id: q.id,
+      title: q.title,
+      text: q.text,
+      limits: {
+        memory: q.memoryLimit,
+        time: q.timeLimit,
+      },
+    };
+  }
+
+  parseCreateContestProblemResponse(q: Problem): CreateProblemResponseJSON {
     return {
       id: q.id,
       title: q.title,
