@@ -33,7 +33,10 @@ export class InmemorySubmissionsRepository implements SubmissionsRepository {
       arg.code,
       arg.language,
       arg.status,
-      arg.point
+      arg.point,
+      0,
+      0,
+      ""
     );
     this._submission.add(req);
 
@@ -85,6 +88,9 @@ export class InmemorySubmissionsRepository implements SubmissionsRepository {
       language: string;
       status: SubmissionState;
       point: number;
+      execTime: number;
+      memoryUsage: number;
+      output: string;
     }>
   ): Promise<Result<Submission, Error>> {
     const res = await this.findSubmissionByID(id);
@@ -105,6 +111,15 @@ export class InmemorySubmissionsRepository implements SubmissionsRepository {
     }
     if (arg.point) {
       res.value.point = arg.point;
+    }
+    if (arg.execTime) {
+      res.value.execTime = arg.execTime;
+    }
+    if (arg.memoryUsage) {
+      res.value.memoryUsage = arg.memoryUsage;
+    }
+    if (arg.output) {
+      res.value.output = arg.output;
     }
 
     await this.createSubmission(res.value);

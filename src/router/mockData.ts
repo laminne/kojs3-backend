@@ -30,7 +30,10 @@ export const SubmissionMockData = [
     "cHJpbnQgImhlbGxvIg==",
     "Ruby",
     "WJ",
-    100
+    100,
+    0,
+    0,
+    ""
   ),
   new Submission(
     "555555555",
@@ -40,7 +43,23 @@ export const SubmissionMockData = [
     "cHJpbnQgImhlbGxvIg==",
     "Ruby",
     "IE",
-    500
+    0,
+    30,
+    20,
+    ""
+  ),
+  new Submission(
+    "991265654654121",
+    "456456456",
+    "111",
+    "222222222",
+    "cHJpbnQgImhlbGxvIg==",
+    "Ruby",
+    "AC",
+    100,
+    267,
+    651,
+    "hello world\n"
   ),
 ];
 
@@ -65,8 +84,8 @@ export const ProblemMockData = [
   ),
 ];
 export const CaseMockData = [
-  new Case("695", "333333333", "hello\n", "world\n"),
-  new Case("889", "222222222", "foo\n", "bar\n"),
+  new Case("695", "333333333", "aGVsbG9cbg==", "world\n"),
+  new Case("889", "222222222", "aGVsbG9cbg==", "bar\n"),
 ];
 
 export const UserMockData = [

@@ -4,6 +4,7 @@ import { PrismaUsersRepository } from "../repository/prisma/users.js";
 import { prisma } from "../repository/prisma/client.js";
 import { InmemoryUserRepository } from "../repository/memory/users.js";
 import { UserMockData } from "./mockData.js";
+import { contestController } from "./contests.js";
 
 export let usersController: UsersController;
 if (process.env.JK_MODE === "db") {
@@ -23,4 +24,5 @@ usersRouter
 usersRouter.route("/:userId").get(usersController.getUserData);
 
 export const authRouter = express.Router();
+authRouter.route("/update-job").post(contestController.updateSubmission);
 authRouter.route("/login").post(usersController.login);

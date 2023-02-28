@@ -63,22 +63,18 @@ model Submission {
   language String
   status   String
   point    Int
+  execTime Int
+  memoryUsage Int
+  output String
+  compileErrorMessage String
+  compilerMessage String
 
-  judgeStatus  JudgeStatus[]
   Contest      Contest       @relation(fields: [contestId], references: [id])
   contestId    String
   Contestant   Contestant    @relation(fields: [contestantId], references: [id])
   contestantId String
   Problem      Problem       @relation(fields: [problemId], references: [id])
   problemId    String
-}
-
-model JudgeStatus {
-  id           String     @id
-  memoryUsage  Int
-  execTime     Int
-  Submission   Submission @relation(fields: [submissionId], references: [id])
-  submissionId String
 }
 
 model Contestant {

@@ -20,6 +20,9 @@ export interface SubmissionsRepository {
       language: string;
       status: SubmissionState;
       point: number;
+      execTime: number;
+      memoryUsage: number;
+      output: string;
     }>
   ): Promise<Result<Submission, Error>>;
 

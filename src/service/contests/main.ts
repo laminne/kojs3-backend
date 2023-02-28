@@ -5,26 +5,32 @@ import {
 import { SubmissionsRepository } from "../../repository/submissionRepository.js";
 import { Failure, Result, Success } from "../../common/result.js";
 import { Submission, SubmissionState } from "../../models/submissions.js";
-import { Problem } from "../../models/problems.js";
+import { Case, Problem } from "../../models/problems.js";
 import { Contest } from "../../models/contest.js";
 import { Snowflake } from "../../common/id/snowflakeID.js";
 import { SnowflakeIDGenerator } from "../../common/id/snowflakeIDGenerator.js";
-
+import { Queue } from "./jobqueuemanager.js";
 export class ContestUseCase {
   private _contestsRepository: ContestsRepository;
   private _submissionsRepository: SubmissionsRepository;
   private _problemRepository: ProblemRepository;
   private _idGenerator: SnowflakeIDGenerator;
+  private _queue: Queue;
+  private _queueURL: string;
 
   constructor(
     contestsRepository: ContestsRepository,
     submissionsRepository: SubmissionsRepository,
-    problemRepository: ProblemRepository
+    problemRepository: ProblemRepository,
+    queue: Queue,
+    queueURL: string
   ) {
     this._contestsRepository = contestsRepository;
     this._submissionsRepository = submissionsRepository;
     this._problemRepository = problemRepository;
     this._idGenerator = new SnowflakeIDGenerator();
+    this._queue = queue;
+    this._queueURL = queueURL;
   }
 
   async allContests(): Promise<Result<Array<Contest>, Error>> {
@@ -155,16 +161,157 @@ export class ContestUseCase {
       point: 0,
     };
 
-    // ToDo: 提出した後のキューに積む処理の実装
     const res = await this._submissionsRepository.createSubmission(req);
     if (res.isFailure()) {
+      return new Failure(new Error());
+    }
+
+    const p = await this._problemRepository.findProblemByID(arg.problemID);
+    if (p.isFailure()) {
+      return new Failure(new Error());
+    }
+    const c = await this._problemRepository.findCasesByProblemID(arg.problemID);
+    if (c.isFailure()) {
+      return new Failure(new Error());
+    }
+    const cases = c.value.map((ca: Case) => {
+      return { name: `${ca.problemID}.txt`, file: ca.input };
+    });
+
+    const r = await this._queue.enqueue(
+      this._queueURL,
+      arg.problemID,
+      arg.id,
+      arg.code,
+      arg.language,
+      cases,
+      { timeLimit: p.value.timeLimit, memoryLimit: p.value.memoryLimit }
+    );
+    if (r.isFailure()) {
       return new Failure(new Error());
     }
 
     return new Success(res.value);
   };
 
+  async updateSubmissionStatus(arg: {
+    submissionID: string;
+    compilerError: string;
+    compilerMessage: string;
+    results: Array<{
+      caseID: string;
+      output: string;
+      exitStatus: number;
+      duration: number;
+      usage: number;
+    }>;
+  }) {
+    /*
+    ToDo:
+      - outputとcaseを比較
+      - ステータスを更新
+      - 保存
+    */
+
+    /*
+  判定
+  
+  AC条件: WA/TLE/MLEがないこと / CEしていないこと
+  */
+    const submission = await this._submissionsRepository.findSubmissionByID(
+      arg.submissionID
+    );
+    if (submission.isFailure()) {
+      return new Failure(new Error("failed to get submission"));
+    }
+
+    const problem = await this._problemRepository.findProblemByID(
+      submission.value.problemID
+    );
+    if (problem.isFailure()) {
+      return new Failure(new Error("failed to get problem"));
+    }
+
+    const cases = await this._problemRepository.findCasesByProblemID(
+      submission.value.problemID
+    );
+    if (cases.isFailure()) {
+      return new Failure(new Error("failed to get cases"));
+    }
+
+    const state = this.judge(cases.value, problem.value, arg.results);
+
+    const r = await this._submissionsRepository.updateSubmission(
+      arg.submissionID,
+      { status: state[0], execTime: state[1], memoryUsage: state[2] }
+    );
+    if (r.isFailure()) {
+      return new Failure(new Error("failed to update submission"));
+    }
+    return new Success("");
+  }
+
   private static isContestStarted(T: Date): boolean {
     return T < new Date();
+  }
+
+  private judge(
+    cases: Array<Case>,
+    problem: Problem,
+    results: Array<{
+      caseID: string;
+      output: string;
+      exitStatus: number;
+      duration: number;
+      usage: number;
+    }>
+  ): [state: SubmissionState, maxDuration: number, maxUsage: number] {
+    let [maxDuration, maxUsage] = [0, 0];
+    const r = results.map((o): SubmissionState => {
+      if (o.duration > maxDuration) {
+        maxDuration = o.duration;
+      }
+      if (o.usage > maxUsage) {
+        maxUsage = o.usage;
+      }
+      // 異常終了 -> IE
+      if (o.exitStatus != 0) {
+        return "IE";
+      }
+      if (o.usage < problem.memoryLimit) {
+        return "MLE";
+      }
+      if (o.duration < problem.timeLimit) {
+        return "TLE";
+      }
+
+      let caseOutput: string = "";
+      cases.map((c) => {
+        if (c.id === o.caseID) {
+          caseOutput = c.output;
+        }
+      });
+
+      if (caseOutput !== o.output) {
+        return "WA";
+      }
+
+      return "AC";
+    });
+
+    if (r.includes("CE")) {
+      return ["CE", maxDuration, maxUsage];
+    }
+    if (r.includes("TLE")) {
+      return ["TLE", maxDuration, maxUsage];
+    }
+    if (r.includes("OLE")) {
+      return ["OLE", maxDuration, maxUsage];
+    }
+    if (r.includes("RE")) {
+      return ["RE", maxDuration, maxUsage];
+    }
+
+    return ["AC", maxDuration, maxUsage];
   }
 }

@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { ContestUseCase } from "./main";
+import { ContestUseCase } from "./main.js";
 import {
   InmemoryContestsRepository,
   InmemoryProblemRepository,
-} from "../../repository/memory/contest";
-import { InmemorySubmissionsRepository } from "../../repository/memory/submission";
-import { Contest } from "../../models/contest";
-import { Problem } from "../../models/problems";
+} from "../../repository/memory/contest.js";
+import { InmemorySubmissionsRepository } from "../../repository/memory/submission.js";
+import { Contest } from "../../models/contest.js";
+import { Problem } from "../../models/problems.js";
+import { DummyQueue } from "./jobqueuemanager.js";
 
 describe("コンテスト", () => {
   const contest = new ContestUseCase(
@@ -49,7 +50,9 @@ describe("コンテスト", () => {
         ),
       ],
       []
-    )
+    ),
+    new DummyQueue(),
+    ""
   );
 
   it("コンテストをすべて取得できる", async () => {

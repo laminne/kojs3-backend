@@ -69,8 +69,6 @@ export class UsersController {
       return res.status(400).send("");
     }
 
-    // ToDo: シリアライザ書く
-    // ToDo: モック実装する
     return res
       .status(201)
       .json(this._serializer.parseCreateUserResponse(user.value, token.value));
