@@ -17,6 +17,7 @@ import {
   ProblemMockData,
   SubmissionMockData,
 } from "./mockData.js";
+import { HqQueue } from "../service/contests/jobqueuemanager.js";
 
 export let contestController: ContestController;
 
@@ -24,13 +25,17 @@ if (process.env.JK_MODE === "db") {
   contestController = new ContestController(
     new PrismaContestsRepository(prisma),
     new PrismaSubmissionsRepository(prisma),
-    new PrismaProblemRepository(prisma)
+    new PrismaProblemRepository(prisma),
+    new HqQueue("http://localhost:19900/job"),
+    "http://localhost:3030/run"
   );
 } else {
   contestController = new ContestController(
     new InmemoryContestsRepository(ContestsMockData),
     new InmemorySubmissionsRepository(SubmissionMockData),
-    new InmemoryProblemRepository(ProblemMockData, CaseMockData)
+    new InmemoryProblemRepository(ProblemMockData, CaseMockData),
+    new HqQueue("http://localhost:19900/job"),
+    "http://localhost:3030/run"
   );
 }
 export const contestsRouter = express.Router();

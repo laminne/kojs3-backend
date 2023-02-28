@@ -8,6 +8,7 @@ import { SubmissionsRepository } from "../../repository/submissionRepository.js"
 import { SnowflakeIDGenerator } from "../../common/id/snowflakeIDGenerator.js";
 import { ContestSerializer } from "./contestSerializer.js";
 import { Snowflake } from "../../common/id/snowflakeID";
+import { Queue } from "../../service/contests/jobqueuemanager";
 
 export class ContestController {
   private _contestUsecase: ContestUseCase;
@@ -16,12 +17,16 @@ export class ContestController {
   constructor(
     contestsRepository: ContestsRepository,
     submissionRepository: SubmissionsRepository,
-    problemRepository: ProblemRepository
+    problemRepository: ProblemRepository,
+    queue: Queue,
+    queueURL: string
   ) {
     this._contestUsecase = new ContestUseCase(
       contestsRepository,
       submissionRepository,
-      problemRepository
+      problemRepository,
+      queue,
+      queueURL
     );
     this._serializer = new ContestSerializer();
   }
@@ -127,5 +132,18 @@ export class ContestController {
     );
     res.json(submission);
     return;
+  };
+
+  // キューの実行結果取得用(ユーザーからは叩かない)
+  public updateSubmission = async (req: Request, res: Response) => {
+    const out = JSON.parse(req.body.output);
+    const arg = {
+      submissionID: out.submissionID,
+      compilerError: out.compilerError,
+      compilerMessage: out.compilerMessage,
+      results: out.results,
+    };
+    await this._contestUsecase.updateSubmissionStatus(arg);
+    res.status(200).send("");
   };
 }

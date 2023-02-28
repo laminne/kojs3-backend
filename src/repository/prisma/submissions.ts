@@ -19,7 +19,10 @@ export class PrismaSubmissionsRepository implements SubmissionsRepository {
       t.code,
       t.language,
       t.status,
-      t.point
+      t.point,
+      t.execTime,
+      t.memoryUsage,
+      t.output
     );
   }
 
@@ -32,6 +35,11 @@ export class PrismaSubmissionsRepository implements SubmissionsRepository {
     language: string;
     status: SubmissionState;
     point: number;
+    memoryUsage: number;
+    execTime: number;
+    output: string;
+    compileErrorMessage: string;
+    compilerMessage: string;
   }): Promise<Result<Submission, Error>> => {
     let q;
     try {
@@ -45,6 +53,11 @@ export class PrismaSubmissionsRepository implements SubmissionsRepository {
           contestId: arg.contestID,
           contestantId: arg.contestantID,
           problemId: arg.problemID,
+          execTime: 0,
+          memoryUsage: 0,
+          output: arg.output,
+          compileErrorMessage: arg.compileErrorMessage,
+          compilerMessage: arg.compilerMessage,
         },
       });
     } catch (e) {
@@ -119,6 +132,9 @@ export class PrismaSubmissionsRepository implements SubmissionsRepository {
       language: string;
       status: SubmissionState;
       point: number;
+      execTime: number;
+      memoryUsage: number;
+      output: string;
     }>
   ): Promise<Result<Submission, Error>> => {
     let q;
@@ -128,10 +144,7 @@ export class PrismaSubmissionsRepository implements SubmissionsRepository {
           id: id,
         },
         data: {
-          code: arg.code,
-          language: arg.language,
-          status: arg.status,
-          point: arg.point,
+          ...arg,
         },
       });
     } catch (e) {

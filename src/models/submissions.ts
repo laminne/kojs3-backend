@@ -18,6 +18,9 @@ export class Submission {
   private _code: string;
   private _language: string;
   private _status: SubmissionState;
+  private _execTime: number;
+  private _memoryUsage: number;
+  private _output: string;
 
   private _point: number;
 
@@ -29,7 +32,10 @@ export class Submission {
     code: string,
     language: string,
     status: SubmissionState,
-    point: number
+    point: number,
+    execTime: number,
+    memoryUsage: number,
+    output: string
   ) {
     this._id = id;
     this._contestID = contestID;
@@ -40,6 +46,9 @@ export class Submission {
     this._language = language;
     this._status = status;
     this._point = point;
+    this._execTime = execTime;
+    this._memoryUsage = memoryUsage;
+    this._output = output;
   }
 
   get id(): string {
@@ -88,34 +97,13 @@ export class Submission {
   set point(value: number) {
     this._point = value;
   }
-}
-
-export class JudgeStatus {
-  private readonly _id: string;
-  private readonly _submissionID: string;
-  private _memoryUsage: number;
-  private _execTime: number;
-
-  constructor(
-    id: string,
-    submissionID: string,
-    memoryUsage: number,
-    execTime: number
-  ) {
-    this._id = id;
-    this._submissionID = submissionID;
-    this._memoryUsage = memoryUsage;
-    this._execTime = execTime;
+  get execTime(): number {
+    return this._execTime;
   }
 
-  get id(): string {
-    return this._id;
+  set execTime(value: number) {
+    this._execTime = value;
   }
-
-  get submissionID(): string {
-    return this._submissionID;
-  }
-
   get memoryUsage(): number {
     return this._memoryUsage;
   }
@@ -123,12 +111,11 @@ export class JudgeStatus {
   set memoryUsage(value: number) {
     this._memoryUsage = value;
   }
-
-  get execTime(): number {
-    return this._execTime;
+  get output(): string {
+    return this._output;
   }
 
-  set execTime(value: number) {
-    this._execTime = value;
+  set output(value: string) {
+    this._output = value;
   }
 }
