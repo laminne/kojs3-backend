@@ -1,0 +1,30 @@
+package token
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/mct-joken/kojs5-backend/pkg/utils/id"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestJWTTokenParser_Parse(t *testing.T) {
+	key := SecureRandom(32)
+	g := NewJWTTokenGenerator(key)
+	p := NewJWTTokenParser(key)
+
+	token, err := g.NewToken("112233")
+	if err != nil {
+		t.Fail()
+	}
+	fmt.Println(token)
+
+	parsed, err := p.Parse(token)
+	if err != nil {
+		t.Fail()
+	}
+
+	assert.Equal(t, id.SnowFlakeID("112233"), parsed)
+
+}
